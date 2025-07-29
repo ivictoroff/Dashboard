@@ -30,24 +30,12 @@ try {
         exit();
     }
     
-    // Verificar se a identidade militar já existe (exceto para o próprio usuário)
-    $stmt = $conn->prepare("SELECT id FROM usuarios WHERE idt_Mil = ? AND id != ?");
-    $stmt->bind_param('si', $idt_Mil, $usuarioId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($result->num_rows > 0) {
-        echo json_encode(['success' => false, 'message' => 'Identidade Militar já existe para outro usuário']);
-        exit();
-    }
-    $stmt->close();
-    
     // Preparar query de atualização
     if (!empty($senha)) {
         // Atualizar com nova senha
         $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
         $stmt = $conn->prepare("UPDATE usuarios SET pg = ?, nome = ?, senha = ? WHERE id = ?");
-        $stmt->bind_param('ssssi', $pg, $nome, $senhaHash, $usuarioId);
+        $stmt->bind_param('sssi', $pg, $nome, $senhaHash, $usuarioId);
     } else {
         // Atualizar sem alterar a senha
         $stmt = $conn->prepare("UPDATE usuarios SET pg = ?, nome = ? WHERE id = ?");

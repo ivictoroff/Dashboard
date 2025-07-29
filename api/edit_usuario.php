@@ -75,7 +75,7 @@ try {
         // Update with new password
         $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
         $stmt = $conn->prepare('UPDATE usuarios SET idt_Mil = ?, pg = ?, nome = ?, senha = ?, chefia_id = ?, divisao_id = ?, perfil_id = ? WHERE id = ?');
-        $stmt->bind_param('ssssiiiii', $idt_Mil, $pg, $nome, $senhaHash, $chefia_id, $divisao_id, $perfil_id, $id);
+        $stmt->bind_param('ssssiiii', $idt_Mil, $pg, $nome, $senhaHash, $chefia_id, $divisao_id, $perfil_id, $id);
     } else {
         // Update without changing password
         $stmt = $conn->prepare('UPDATE usuarios SET idt_Mil = ?, pg = ?, nome = ?, chefia_id = ?, divisao_id = ?, perfil_id = ? WHERE id = ?');

@@ -30,13 +30,6 @@ Sistema web para gerenciamento de assuntos críticos do Comando Logístico do Ex
 - **Histórico preservado**: Todos os dados permanecem no banco
 - **Registro de auditoria**: Exclusão é registrada no histórico
 
-#### Migração para sistemas existentes
-```sql
-USE cel;
-ALTER TABLE assuntos ADD COLUMN IF NOT EXISTS ativo TINYINT(1) DEFAULT 1;
-UPDATE assuntos SET ativo = 1 WHERE ativo IS NULL;
-```
-
 ## Perfis de Usuário
 - **Administrador**: Acesso total ao sistema
 - **Visualizador**: Apenas visualização de assuntos e resumos
