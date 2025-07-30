@@ -9,13 +9,8 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit();
 }
 
-// Verificar permissões - apenas Admin e Criador podem excluir
+// Verificar permissões - todos os perfis podem excluir
 $perfil = $_SESSION['perfil_id'] ?? 2;
-if ($perfil == 2) { // Visualizador não pode excluir
-    http_response_code(403);
-    echo json_encode(['error' => 'Permissão negada']);
-    exit();
-}
 
 header('Content-Type: application/json');
 require_once '../db.php';

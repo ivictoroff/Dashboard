@@ -44,6 +44,7 @@ try {
     
     if ($stmt->execute()) {
         // Atualizar dados na sessão
+        $_SESSION['pg'] = $pg;
         $_SESSION['nome'] = $nome;
         
         echo json_encode([

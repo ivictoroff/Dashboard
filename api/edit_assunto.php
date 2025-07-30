@@ -63,7 +63,7 @@ try {
         FROM assuntos a 
         JOIN usuarios u_criador ON a.criadoPor = u_criador.id
         JOIN usuarios u_atual ON u_atual.id = ?
-        WHERE a.id = ?
+        WHERE a.id = ? AND a.ativo = 1
     ");
     $stmtCheck->bind_param("ii", $usuarioId, $id);
     $stmtCheck->execute();

@@ -5,35 +5,19 @@ Sistema web para gerenciamento de assuntos críticos do Comando Logístico do Ex
 
 ## Funcionalidades
 - Gerenciamento de assuntos críticos e não críticos
-- Sistema de usuários com 3 perfis (Administrador, Visualizador, Criador)
+- Sistema de usuários com 4 perfis (Suporte Técnico, Auditor OM/Chefia, Auditor COLOG, Editor)
 - Gerenciamento de chefias e divisões
 - Dashboard com resumos e gráficos
 - Interface responsiva para desktop e mobile
 - Histórico de alterações
 - Sistema de ações e providências
-- **NOVO: Exclusão suave de assuntos**
-
-### Funcionalidade de Exclusão de Assuntos (Nova)
-
-#### Permissões
-- **Administradores**: Podem excluir qualquer assunto
-- **Criadores**: Podem excluir qualquer assunto  
-- **Visualizadores**: Não podem excluir assuntos (botão não aparece)
-
-#### Como funciona
-1. Na tabela de assuntos, clique no botão "Excluir" (vermelho)
-2. Confirme a exclusão na tela de confirmação
-3. O assunto será removido da visualização mas preservado no banco para auditoria
-
-#### Características técnicas
-- **Exclusão suave**: Usa campo `ativo` para controlar visibilidade
-- **Histórico preservado**: Todos os dados permanecem no banco
-- **Registro de auditoria**: Exclusão é registrada no histórico
+- Sistema de notas de auditoria
 
 ## Perfis de Usuário
-- **Administrador**: Acesso total ao sistema
-- **Visualizador**: Apenas visualização de assuntos e resumos
-- **Criador**: Pode criar e editar assuntos, sem acesso ao gerenciamento de usuários
+- **Suporte Técnico**: Acesso total ao sistema, pode gerenciar usuários, assuntos, divisões e chefias
+- **Auditor OM/Chefia**: Pode visualizar assuntos da sua chefia e criar notas de auditoria
+- **Auditor COLOG**: Pode visualizar todos os assuntos e criar notas de auditoria  
+- **Editor**: Pode criar novos assuntos e visualizar o sistema
 
 ## Requisitos
 - PHP 7.4 ou superior

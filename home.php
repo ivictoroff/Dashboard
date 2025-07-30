@@ -39,6 +39,10 @@ if (isset($_SESSION['divisao_id'])) {
             background-color: #3b82f6;
             color: white;
         }
+        .chefia-filter-active {
+            background-color: #059669;
+            color: white;
+        }
         .modal {
             display: none;
             position: fixed;
@@ -394,7 +398,23 @@ if (isset($_SESSION['divisao_id'])) {
 
                 <!-- Todos os assuntos Tab -->
                 <div id="todosTab" class="tab-content hidden">
-                    <!-- Filters -->
+                    <!-- Filtro por chefia -->
+                    <div id="chefiaFilterSection" class="bg-white rounded-lg shadow p-4 md:p-6 mb-6" style="display: none;">
+                        <div class="flex flex-col gap-4">
+                            <!-- Primeira Linha - Filtros de chefia (apenas para Auditor COLOG - perfil 3) -->
+                            <div id="chefiaFilterContainer" class="flex flex-wrap gap-2" style="display: none;">
+                                <span class="text-xs md:text-sm text-gray-600 font-medium flex items-center mr-2">Filtrar por OM/Chefia:</span>
+                                <button id="chefiaFilterAll" class="px-3 py-2 text-xs md:px-4 md:py-2 md:text-sm rounded-lg border chefia-filter-active" onclick="filterByChefiaBtn('')">
+                                    Todas as OM/Chefias
+                                </button>
+                                <div id="chefiaBtnContainer" class="flex flex-wrap gap-2">
+                                    <!-- Botões de chefia serão inseridos aqui dinamicamente -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filtros -->
                     <div class="bg-white rounded-lg shadow p-4 md:p-6 mb-6">
                         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                             <div class="flex flex-wrap gap-2">
@@ -428,7 +448,7 @@ if (isset($_SESSION['divisao_id'])) {
                             </div>
                         </div>
                     </div>
-
+                    
                     <!-- Table -->
                     <div class="bg-white rounded-lg shadow">
                         <div class="overflow-x-auto">
@@ -482,7 +502,7 @@ if (isset($_SESSION['divisao_id'])) {
                         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-4 flex-1">
                                 <input type="text" id="filterIdtMilitar" placeholder="ID Militar" class="px-2 py-2 md:px-3 md:py-2 border rounded-lg text-xs md:text-sm">
-                                <input type="text" id="filterpg" placeholder="pg/Grad" class="px-2 py-2 md:px-3 md:py-2 border rounded-lg text-xs md:text-sm">
+                                <input type="text" id="filterpg" placeholder="P/Grad" class="px-2 py-2 md:px-3 md:py-2 border rounded-lg text-xs md:text-sm">
                                 <input type="text" id="filterNomeGuerra" placeholder="Nome de Guerra" class="px-2 py-2 md:px-3 md:py-2 border rounded-lg text-xs md:text-sm">
                                 <input type="text" id="filterChefia" placeholder="Chefia" class="px-2 py-2 md:px-3 md:py-2 border rounded-lg text-xs md:text-sm">
                                 <input type="text" id="filterDivisao" placeholder="Divisão" class="px-2 py-2 md:px-3 md:py-2 border rounded-lg text-xs md:text-sm">
@@ -503,13 +523,13 @@ if (isset($_SESSION['divisao_id'])) {
                                             Identidade Militar
                                         </th>
                                         <th class="px-2 py-3 md:px-4 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            pg/Grad
+                                            P/Grad
                                         </th>
                                         <th class="px-2 py-3 md:px-4 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Nome de Guerra
                                         </th>
                                         <th class="px-2 py-3 md:px-4 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Chefia
+                                            OM/Chefia
                                         </th>
                                         <th class="px-2 py-3 md:px-4 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Divisão
@@ -537,7 +557,7 @@ if (isset($_SESSION['divisao_id'])) {
                         <div class="bg-white rounded-lg shadow">
                             <div class="p-4 md:p-6 border-b">
                                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                                    <h3 class="text-lg font-semibold">Chefias</h3>
+                                    <h3 class="text-lg font-semibold">OM/Chefias</h3>
                                     <button id="addChefiaBtn" class="px-3 py-2 md:px-4 md:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs md:text-sm w-full sm:w-auto">
                                         + Adicionar chefia
                                     </button>
@@ -548,7 +568,7 @@ if (isset($_SESSION['divisao_id'])) {
                                     <thead class="bg-gray-50">
                                         <tr>
                                             <th class="px-3 py-3 md:px-4 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Chefia
+                                                OM/Chefia
                                             </th>
                                             <th class="px-3 py-3 md:px-4 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Ações
@@ -566,7 +586,7 @@ if (isset($_SESSION['divisao_id'])) {
                         <div class="bg-white rounded-lg shadow">
                             <div class="p-4 md:p-6 border-b">
                                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                                    <h3 class="text-lg font-semibold">Divisões</h3>
+                                    <h3 class="text-lg font-semibold">Divisões/Sessões</h3>
                                     <button id="addDivisaoBtn" class="px-3 py-2 md:px-4 md:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs md:text-sm w-full sm:w-auto">
                                         + Adicionar divisão
                                     </button>
@@ -577,10 +597,10 @@ if (isset($_SESSION['divisao_id'])) {
                                     <thead class="bg-gray-50">
                                         <tr>
                                             <th class="px-3 py-3 md:px-4 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Divisão
+                                                Divisão/Sessão
                                             </th>
                                             <th class="px-3 py-3 md:px-4 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Chefia
+                                                OM/Chefia
                                             </th>
                                             <th class="px-3 py-3 md:px-4 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Ações
@@ -692,13 +712,13 @@ if (isset($_SESSION['divisao_id'])) {
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">pg/Grad</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">P/Grad</label>
                     <select name="pg" id="pg" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                       <!--OPÇÕES-->
                       <option value="">Selecione seu posto/gradução</option>
-                      <option value="GENERAL DE EXÉRCITO">GENERAL DE EXÉRCITO</option> 
-                      <option value="GENERAL DE DIVISÃO">GENERAL DE DIVISÃO</option> 
-                      <option value="GENERAL DE BRIGADA">GENERAL DE BRIGADA</option> 
+                      <option value="Gen Ex">GENERAL DE EXÉRCITO</option> 
+                      <option value="Gen Div">GENERAL DE DIVISÃO</option> 
+                      <option value="Gen Bda">GENERAL DE BRIGADA</option> 
                       <option value="Cel">CORONEL</option>  
                       <option value="TC">TENENTE-CORONEL</option>
                       <option value="Maj">MAJOR</option>
@@ -718,9 +738,10 @@ if (isset($_SESSION['divisao_id'])) {
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Perfil do Usuário</label>
                     <select name="perfil_id" id="usuarioPerfilSelect" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="2">Visualizador</option>
-                        <option value="1">Administrador</option>
-                        <option value="3">Criador</option>
+                        <option value="1">Suporte Técnico</option>
+                        <option value="2">Auditor OM/Chefia</option>
+                        <option value="3">Auditor COLOG</option>
+                        <option value="4">Editor</option>
                     </select>
                 </div>
 
@@ -779,12 +800,12 @@ if (isset($_SESSION['divisao_id'])) {
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">pg/Grad</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">P/Grad</label>
                     <select name="pg" id="contaPg" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                       <option value="">Selecione seu posto/graduação</option>
-                      <option value="GENERAL DE EXÉRCITO">GENERAL DE EXÉRCITO</option> 
-                      <option value="GENERAL DE DIVISÃO">GENERAL DE DIVISÃO</option> 
-                      <option value="GENERAL DE BRIGADA">GENERAL DE BRIGADA</option> 
+                      <option value="Gen Ex">GENERAL DE EXÉRCITO</option> 
+                      <option value="Gen Div">GENERAL DE DIVISÃO</option> 
+                      <option value="Gen Bda">GENERAL DE BRIGADA</option> 
                       <option value="Cel">CORONEL</option>  
                       <option value="TC">TENENTE-CORONEL</option>
                       <option value="Maj">MAJOR</option>
@@ -827,7 +848,7 @@ if (isset($_SESSION['divisao_id'])) {
     <div id="chefiaModal" class="modal">
         <div class="modal-content" style="max-width: 500px;">
             <div class="flex justify-between items-center mb-6">
-                <h3 id="chefiaModalTitle" class="text-xl font-bold">Adicionar Nova Chefia</h3>
+                <h3 id="chefiaModalTitle" class="text-xl font-bold">Adicionar Nova OM/Chefia</h3>
                 <button onclick="closeChefiaModal()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
             </div>
             
@@ -835,7 +856,7 @@ if (isset($_SESSION['divisao_id'])) {
                 <input type="hidden" id="chefiaId" name="id">
                 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Chefia</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">OM/Chefia</label>
                     <input type="text" name="chefia" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
 
@@ -906,6 +927,27 @@ if (isset($_SESSION['divisao_id'])) {
         
         <div id="detalharAssuntoContent" class="space-y-6">
             <!-- Conteúdo será preenchido dinamicamente -->
+        </div>
+        
+        <!-- Seção de Notas de Auditoria (visível para todos, mas apenas Auditores e Editores podem adicionar) -->
+        <div id="notasAuditoriaSection" class="mt-6 border-t pt-6" style="display: none;">
+            <h4 class="text-lg font-semibold mb-4">Notas de Auditoria</h4>
+            
+            <!-- Lista de notas existentes -->
+            <div id="notasExistentes" class="mb-4">
+                <!-- Notas serão carregadas dinamicamente -->
+            </div>
+            
+            <!-- Formulário para adicionar nova nota -->
+            <div id="adicionarNotaForm" class="bg-gray-50 p-4 rounded-lg">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Adicionar Nova Nota</label>
+                <textarea id="novaNota" placeholder="Digite sua nota de auditoria aqui..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3"></textarea>
+                <div class="mt-3 flex justify-end">
+                    <button onclick="adicionarNotaAuditoria()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        Adicionar Nota
+                    </button>
+                </div>
+            </div>
         </div>
         
         <div class="flex justify-between pt-4 border-t">
@@ -1062,25 +1104,52 @@ if (isset($_SESSION['divisao_id'])) {
         let currentFilter = 'pendentes';
         let currentUser = {
             nome: "<?php echo addslashes($usuarioNome); ?>",
+            pg: "<?php echo addslashes($_SESSION['pg'] ?? ''); echo " -"; ?>",
             divisao: "<?php echo addslashes($usuarioDivisao); ?>",
-            perfil: <?php echo isset($_SESSION['perfil_id']) ? (int)$_SESSION['perfil_id'] : (isset($perfil) ? (int)$perfil : 2); ?> // 1=Admin, 2=Visualizador, 3=Criador
+            perfil: <?php echo isset($_SESSION['perfil_id']) ? (int)$_SESSION['perfil_id'] : (isset($perfil) ? (int)$perfil : 2); ?> // 1=Suporte Técnico, 2=Auditor OM/Chefia, 3=Auditor COLOG, 4=Editor
         };
 
         // Exibir/ocultar abas do sidebar conforme perfil
         document.addEventListener('DOMContentLoaded', function() {
-            // 1=Admin, 2=Visualizador, 3=Criador
-            if (currentUser.perfil === 2) {
-                // Visualizador: só pode ver "Resumo" e "Todos os assuntos"
+            // 1=Suporte Técnico, 2=Auditor OM/Chefia, 3=Auditor COLOG, 4=Editor
+            if (currentUser.perfil === 1) {
+                // Suporte Técnico: vê tudo, incluindo filtro de chefia
+                const chefiaFilterSection = document.getElementById('chefiaFilterSection');
+                if (chefiaFilterSection) {
+                    chefiaFilterSection.style.display = 'block';
+                }
+                const chefiaFilterContainer = document.getElementById('chefiaFilterContainer');
+                if (chefiaFilterContainer) {
+                    chefiaFilterContainer.style.display = 'flex';
+                    setupChefiaFilter();
+                }
+            } else if (currentUser.perfil === 2) {
+                // Auditor OM/Chefia: não pode ver "Usuários" e "OM", vê assuntos da sua chefia
                 document.querySelector("a[onclick=\"switchTab('usuarios')\"]").style.display = 'none';
                 document.querySelector("a[onclick=\"switchTab('om')\"]").style.display = 'none';
-                // Esconde botão de adicionar assunto
                 var addAssuntoBtn = document.getElementById('addAssuntoBtn');
                 if (addAssuntoBtn) addAssuntoBtn.style.display = 'none';
             } else if (currentUser.perfil === 3) {
-                // Criador: não pode ver "Usuários"
+                // Auditor COLOG: não pode ver "Usuários" e "OM", mas pode ver filtro de chefia
                 document.querySelector("a[onclick=\"switchTab('usuarios')\"]").style.display = 'none';
                 document.querySelector("a[onclick=\"switchTab('om')\"]").style.display = 'none';
-            } // Admin vê tudo
+                var addAssuntoBtn = document.getElementById('addAssuntoBtn');
+                if (addAssuntoBtn) addAssuntoBtn.style.display = 'none';
+                // Mostrar seção completa do filtro de chefia para Auditor COLOG
+                const chefiaFilterSection = document.getElementById('chefiaFilterSection');
+                if (chefiaFilterSection) {
+                    chefiaFilterSection.style.display = 'block';
+                }
+                const chefiaFilterContainer = document.getElementById('chefiaFilterContainer');
+                if (chefiaFilterContainer) {
+                    chefiaFilterContainer.style.display = 'flex';
+                    setupChefiaFilter();
+                }
+            } else if (currentUser.perfil === 4) {
+                // Editor: não pode ver "Usuários" e "OM", vê apenas assuntos da sua divisão
+                document.querySelector("a[onclick=\"switchTab('usuarios')\"]").style.display = 'none';
+                document.querySelector("a[onclick=\"switchTab('om')\"]").style.display = 'none';
+            } // Suporte Técnico vê tudo
         });
         
         let assuntos = [];
@@ -1173,7 +1242,8 @@ if (isset($_SESSION['divisao_id'])) {
 
         // Inicializar informações do usuário
         function updateUserInfo() {
-            document.getElementById('userInfo').textContent = `${currentUser.nome} - ${currentUser.divisao}`;
+            const displayName = currentUser.pg ? `${currentUser.pg} ${currentUser.nome}` : currentUser.nome;
+            document.getElementById('userInfo').textContent = `${displayName} - ${currentUser.divisao}`;
         }
 
         // Definir data atual no campo dataInicio
@@ -1336,8 +1406,8 @@ if (isset($_SESSION['divisao_id'])) {
             // Sempre mostrar todas as categorias no gráfico
             const chartData = [pendentesCriticos, pendentesOrdinarios, concluidosCriticos, concluidosOrdinarios];
             const chartLabels = ['Pendentes Críticos', 'Pendentes Ordinários', 'Concluídos Críticos', 'Concluídos Ordinários'];
-            const chartColors = ['#FEE2E2', '#FEF3C7', '#DCFCE7', '#DBEAFE'];
-            const chartBorderColors = ['#DC2626', '#D97706', '#16A34A', '#2563EB'];
+            const chartColors = ['#FEE2E2', '#FEF3C7', '#dce4fcff', '#DBEAFE'];
+            const chartBorderColors = ['#DC2626', '#D97706', '#1630a3ff', '#2563EB'];
             
             if (hasData) {
                 
@@ -1501,9 +1571,10 @@ if (isset($_SESSION['divisao_id'])) {
         // Função para retornar o label do perfil
         function perfilLabel(perfilId) {
             switch(parseInt(perfilId)) {
-                case 1: return 'Administrador';
-                case 2: return 'Visualizador';
-                case 3: return 'Criador';
+                case 1: return 'Suporte Técnico';
+                case 2: return 'Auditor OM/Chefia';
+                case 3: return 'Auditor COLOG';
+                case 4: return 'Editor';
                 default: return 'Não definido';
             }
         }
@@ -1561,8 +1632,76 @@ if (isset($_SESSION['divisao_id'])) {
                 filteredAssuntos = filteredAssuntos.filter(a => a.prazo <= dataFim);
             }
             
+            // Filter by chefia (para Suporte Técnico e Auditor COLOG)
+            if (currentChefiaFilter && (currentUser.perfil === 1 || currentUser.perfil === 3)) {
+                filteredAssuntos = filteredAssuntos.filter(a => a.chefia === currentChefiaFilter);
+            }
+            
             renderTable(filteredAssuntos);
             updateTotalCount(filteredAssuntos.length, 'assuntos');
+        }
+
+        // Função para configurar os botões de filtro de chefia
+        function setupChefiaFilter() {
+            // Aguardar que as chefias sejam carregadas
+            setTimeout(() => {
+                const chefiaBtnContainer = document.getElementById('chefiaBtnContainer');
+                if (chefiaBtnContainer && chefias.length > 0) {
+                    // Limpar botões existentes
+                    chefiaBtnContainer.innerHTML = '';
+                    
+                    // Adicionar botões para cada chefia
+                    chefias.forEach(chefia => {
+                        const button = document.createElement('button');
+                        button.className = 'px-3 py-2 text-xs md:px-4 md:py-2 md:text-sm rounded-lg border hover:bg-gray-50';
+                        button.textContent = chefia.nome;
+                        button.onclick = () => filterByChefiaBtn(chefia.nome);
+                        chefiaBtnContainer.appendChild(button);
+                    });
+                }
+            }, 500); // Aguardar 500ms para as chefias serem carregadas
+        }
+
+        // Variável global para armazenar o filtro de chefia atual
+        let currentChefiaFilter = '';
+
+        // Função para filtrar por chefia usando botões
+        function filterByChefiaBtn(chefiaNome) {
+            currentChefiaFilter = chefiaNome;
+            
+            // Atualizar classes dos botões de chefia
+            document.querySelectorAll('#chefiaFilterContainer button').forEach(btn => {
+                btn.classList.remove('chefia-filter-active');
+                btn.classList.add('hover:bg-gray-50');
+            });
+            
+            // Marcar o botão ativo
+            if (chefiaNome === '') {
+                // Botão "Todas as chefias"
+                document.getElementById('chefiaFilterAll').classList.add('chefia-filter-active');
+                document.getElementById('chefiaFilterAll').classList.remove('hover:bg-gray-50');
+            } else {
+                // Encontrar e marcar o botão da chefia específica
+                const buttons = document.querySelectorAll('#chefiaBtnContainer button');
+                buttons.forEach(btn => {
+                    if (btn.textContent === chefiaNome) {
+                        btn.classList.add('chefia-filter-active');
+                        btn.classList.remove('hover:bg-gray-50');
+                    }
+                });
+            }
+            
+            // Aplicar filtros
+            applyFilters();
+        }
+
+        // Função para resetar filtros de chefia
+        function resetChefiaFilters() {
+            currentChefiaFilter = '';
+            // Resetar para "Todas as chefias"
+            if (document.getElementById('chefiaFilterAll')) {
+                filterByChefiaBtn('');
+            }
         }
 
         function renderTable(data) {
@@ -1604,18 +1743,12 @@ if (isset($_SESSION['divisao_id'])) {
                             <button onclick="detalharAssunto(${assunto.id})" class="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700">
                                 Detalhar
                             </button>
-                            ${currentUser.perfil !== 2 ? `
                             <button onclick="editarAssunto(${assunto.id})" class="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700">
                                 Editar
                             </button>
                             <button onclick="confirmarExclusaoAssunto(${assunto.id}, '${assunto.assunto.substring(0, 50).replace(/'/g, "\\'")}...')" class="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700">
                                 Excluir
                             </button>
-                            ` : `
-                            <button onclick="editarAssunto(${assunto.id})" class="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700">
-                                Editar
-                            </button>
-                            `}
                         </div>
                     </td>
                 `;
@@ -1657,9 +1790,10 @@ if (isset($_SESSION['divisao_id'])) {
             }
             
             const perfilLabel = (perfilId) => {
-                if (perfilId == 1) return 'Administrador';
-                if (perfilId == 2) return 'Visualizador';
-                if (perfilId == 3) return 'Criador';
+                if (perfilId == 1) return 'Suporte Técnico';
+                if (perfilId == 2) return 'Auditor OM/Chefia';
+                if (perfilId == 3) return 'Auditor COLOG';
+                if (perfilId == 4) return 'Editor';
                 return '-';
             };
             data.forEach(usuario => {
@@ -1897,10 +2031,14 @@ if (isset($_SESSION['divisao_id'])) {
                 if (result.success) {                   
                     // Atualizar informações na interface
                     const novoNome = formData.get('nome');
+                    const novoPg = formData.get('pg');
                     if (novoNome) {
                         currentUser.nome = novoNome;
-                        updateUserInfo();
                     }
+                    if (novoPg) {
+                        currentUser.pg = novoPg;
+                    }
+                    updateUserInfo();
                     
                     closeContaModal();
                 } else {
@@ -1942,12 +2080,12 @@ if (isset($_SESSION['divisao_id'])) {
             document.getElementById('chefiaModal').style.display = 'block';
             
             if (isEdit) {
-                document.getElementById('chefiaModalTitle').textContent = 'Editar Chefia';
-                document.getElementById('saveChefiaBtn').textContent = 'Salvar chefia';
+                document.getElementById('chefiaModalTitle').textContent = 'Editar OM/Chefia';
+                document.getElementById('saveChefiaBtn').textContent = 'Salvar OM/Chefia';
                 document.getElementById('deleteChefiaBtn').classList.remove('hidden');
             } else {
-                document.getElementById('chefiaModalTitle').textContent = 'Adicionar Nova Chefia';
-                document.getElementById('saveChefiaBtn').textContent = 'Adicionar chefia';
+                document.getElementById('chefiaModalTitle').textContent = 'Adicionar Nova OM/Chefia';
+                document.getElementById('saveChefiaBtn').textContent = 'Adicionar OM/Chefia';
                 document.getElementById('deleteChefiaBtn').classList.add('hidden');
                 editingChefia = null;
             }
@@ -2399,6 +2537,18 @@ function detalharAssunto(assuntoId) {
             </div>
         </div>
     `;
+    
+    // Sempre mostrar seção de notas de auditoria para todos os perfis
+    document.getElementById('notasAuditoriaSection').style.display = 'block';
+    carregarNotasAuditoria(assuntoId);
+    
+    // Controlar visibilidade do formulário de adicionar nota (apenas Auditores)
+    const adicionarNotaForm = document.getElementById('adicionarNotaForm');
+    if (currentUser.perfil === 2 || currentUser.perfil === 3) { // Auditor OM/Chefia ou Auditor COLOG
+        adicionarNotaForm.style.display = 'block';
+    } else {
+        adicionarNotaForm.style.display = 'none';
+    }
     
     document.getElementById('detalharAssuntoModal').style.display = 'block';
 }
@@ -2934,6 +3084,133 @@ function salvarAcao(acaoId) {
             console.error('Erro:', error);
             alert('Ocorreu um erro ao conectar com o servidor.');
         }
+    });
+
+    // Funções para Notas de Auditoria
+    async function carregarNotasAuditoria(assuntoId) {
+        try {
+            const response = await fetch(`api/get_notas_auditoria.php?assunto_id=${assuntoId}`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const notas = await response.json();
+            exibirNotasAuditoria(notas);
+            
+        } catch (error) {
+            console.error('Erro ao carregar notas de auditoria:', error);
+            document.getElementById('notasExistentes').innerHTML = '<p class="text-red-600">Erro ao carregar notas de auditoria</p>';
+        }
+    }
+
+    function exibirNotasAuditoria(notas) {
+        const container = document.getElementById('notasExistentes');
+        
+        if (notas.length === 0) {
+            container.innerHTML = '<p class="text-gray-500 italic">Nenhuma nota de auditoria registrada</p>';
+            return;
+        }
+        
+        const html = notas.map(nota => `
+            <div class="bg-white border border-gray-200 rounded-lg p-4 mb-3">
+                <div class="flex justify-between items-start mb-2">
+                    <div class="text-sm text-gray-600">
+                        <strong>${nota.autor}</strong> - ${nota.perfil}
+                    </div>
+                    <div class="text-xs text-gray-400">
+                        ${formatDateTime(nota.data_criacao)}
+                    </div>
+                </div>
+                <div class="text-sm text-gray-800">
+                    ${nota.nota}
+                </div>
+            </div>
+        `).join('');
+        
+        container.innerHTML = html;
+    }
+
+    async function adicionarNotaAuditoria() {
+        const nota = document.getElementById('novaNota').value.trim();
+        
+        if (!nota) {
+            alert('Por favor, digite uma nota');
+            return;
+        }
+        
+        if (!assuntoAtual) {
+            alert('Nenhum assunto selecionado');
+            return;
+        }
+        
+        try {
+            const response = await fetch('api/add_nota_auditoria.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    assunto_id: assuntoAtual.id,
+                    nota: nota
+                })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                // Limpar campo de texto
+                document.getElementById('novaNota').value = '';
+                
+                // Recarregar notas
+                carregarNotasAuditoria(assuntoAtual.id);
+                
+                alert('Nota de auditoria adicionada com sucesso!');
+            } else {
+                throw new Error(result.error || 'Erro desconhecido');
+            }
+            
+        } catch (error) {
+            console.error('Erro ao adicionar nota de auditoria:', error);
+            alert('Erro ao adicionar nota de auditoria: ' + error.message);
+        }
+    }
+
+    function formatDateTime(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleString('pt-BR');
+    }
+
+    // Inicialização principal da página
+    window.addEventListener('load', function() {
+        // Chamar as funções de inicialização que não foram chamadas no DOMContentLoaded
+        if (currentUser.perfil === 1) {
+            // Suporte Técnico pode ver tudo - não há restrições adicionais
+            fetchAssuntos();
+            fetchUsuarios();
+            fetchChefias();
+            fetchDivisoes();
+        } else {
+            // Para outros perfis, apenas carregar assuntos
+            fetchAssuntos();
+            if (currentUser.perfil === 1) {
+                fetchUsuarios();
+                fetchChefias();
+                fetchDivisoes();
+            } else {
+                fetchChefias();
+                fetchDivisoes();
+            }
+        }
+        
+        updateUserInfo();
+        setDataInicio();
+        setupSidebarLinks();
+        setupResponsiveEvents();
     });
 </script>
 </body>

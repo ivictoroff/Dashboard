@@ -3,7 +3,7 @@ header('Content-Type: application/json');
 require_once '../db.php';
 
 try {
-    $sql = "SELECT id, nome FROM chefia ORDER BY nome";
+    $sql = "SELECT id, nome FROM chefia ORDER BY id";
     $result = $conn->query($sql);
 
     $chefias = $result->fetch_all(MYSQLI_ASSOC);

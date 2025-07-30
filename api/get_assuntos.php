@@ -1,12 +1,24 @@
 <?php
 // api/get_assuntos.php
+session_start();
 header('Content-Type: application/json');
 require_once '../db.php';
+
+// Verificar se o usuário está logado
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+    http_response_code(401);
+    echo json_encode(['error' => 'Usuário não autenticado']);
+    exit();
+}
 
 try {
     $filterType = $_GET['filter'] ?? 'todos';
     $dataInicio = $_GET['dataInicio'] ?? null;
     $dataFim = $_GET['dataFim'] ?? null;
+    
+    // Obter informações do usuário logado
+    $perfilId = $_SESSION['perfil_id'] ?? 2;
+    $chefiaId = $_SESSION['chefia_id'] ?? null;
 
     $sql = "
         SELECT 
@@ -43,6 +55,28 @@ try {
 
     $params = [];
     $types = '';
+
+    // Filtro baseado no perfil do usuário
+    if ($perfilId === 2) { // Auditor OM/Chefia
+        if ($chefiaId) {
+            $sql .= " AND ch.id = ?";
+            $params[] = $chefiaId;
+            $types .= 'i';
+        } else {
+            // Se não tem chefia definida, não deve ver nenhum assunto
+            $sql .= " AND 1 = 0";
+        }
+    } elseif ($perfilId === 4) { // Editor
+        if ($chefiaId) {
+            $sql .= " AND ch.id = ?";
+            $params[] = $chefiaId;
+            $types .= 'i';
+        } else {
+            // Se não tem chefia definida, não deve ver nenhum assunto
+            $sql .= " AND 1 = 0";
+        }
+    }
+    // Perfis 1 e 3 veem todos os assuntos (com possível filtro adicional no frontend)
 
     // Filtros
     if ($filterType === 'criticos') {

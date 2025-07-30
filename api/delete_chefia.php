@@ -7,6 +7,14 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit();
 }
 
+// Verificar se o usuário tem permissão (apenas Suporte Técnico)
+$perfilId = $_SESSION['perfil_id'] ?? 2;
+if ($perfilId !== 1) { // 1=Suporte Técnico
+    http_response_code(403);
+    echo json_encode(['error' => 'Permissão negada. Apenas Suporte Técnico pode gerenciar chefias.']);
+    exit();
+}
+
 require_once '../db.php';
 
 // Verifica se a requisição é POST

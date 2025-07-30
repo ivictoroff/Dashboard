@@ -1,6 +1,22 @@
 <?php
+session_start();
 header('Content-Type: application/json');
 require_once '../db.php';
+
+// Verificar se o usuário está logado
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+    http_response_code(401);
+    echo json_encode(['error' => 'Usuário não autenticado']);
+    exit();
+}
+
+// Verificar se o usuário tem permissão (apenas Suporte Técnico)
+$perfilId = $_SESSION['perfil_id'] ?? 2;
+if ($perfilId !== 1) { // 1=Suporte Técnico
+    http_response_code(403);
+    echo json_encode(['error' => 'Permissão negada. Apenas Suporte Técnico pode gerenciar usuários.']);
+    exit();
+}
 
 $data = json_decode(file_get_contents('php://input'), true);
 if (!$data) {

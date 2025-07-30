@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Usando prepared statements com MySQLi para prevenir injeção de SQL
-    $stmt = $conn->prepare("SELECT id, idt_Mil, senha, nome, divisao_id, chefia_id, perfil_id FROM usuarios WHERE idt_Mil = ?");
+    $stmt = $conn->prepare("SELECT id, idt_Mil, pg, senha, nome, divisao_id, chefia_id, perfil_id FROM usuarios WHERE idt_Mil = ?");
 
     if ($stmt === false) {
         // Erro na preparação da consulta
@@ -56,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['logged_in'] = true;
         $_SESSION['usuario_id'] = $usuario['id'];
         $_SESSION['idt_Mil'] = $usuario['idt_Mil'];
+        $_SESSION['pg'] = $usuario['pg'];
         $_SESSION['nome'] = $usuario['nome'];
         $_SESSION['divisao_id'] = $usuario['divisao_id'] ?? null;
         $_SESSION['chefia_id'] = $usuario['chefia_id'] ?? null;
