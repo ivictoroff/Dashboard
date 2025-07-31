@@ -186,7 +186,7 @@ CREATE TABLE `notas_auditoria` (
 INSERT INTO `notas_auditoria` (`id`, `assunto_id`, `usuario_id`, `nota`, `data_criacao`) VALUES
 (1, 1, 4, 'Verificado que os orçamentos foram solicitados conforme protocolo. Recomendo acompanhar os prazos de resposta dos fornecedores.', '2025-01-16 13:30:00'),
 (2, 1, 5, 'Analisando as especificações técnicas solicitadas. Algumas podem estar superdimensionadas para a necessidade atual.', '2025-01-17 17:15:00'),
-(3, 2, 4, 'Assunto está dentro do prazo estabelecido. Sugerido verificar disponibilidade orçamentária antes do agendamento.', '2025-01-15 19:45:00'),
+(3, 2, 4, 'Assunto está dentro do prazo estabelecido. Sugerido verificar disponibilidade orçamentária antes do agendamento.', '2025-01-15 19:45:00');
 
 -- --------------------------------------------------------
 
@@ -208,7 +208,8 @@ INSERT INTO `perfis` (`id`, `nome`, `descricao`) VALUES
 (1, 'Suporte Técnico', 'Acesso total ao sistema, pode gerenciar usuários, assuntos, divisões e chefias. Responsável pelo suporte técnico do sistema.'),
 (2, 'Auditor OM/Chefia', 'Pode visualizar assuntos da sua chefia e criar notas de auditoria. Acesso limitado às funções de auditoria por OM/Chefia.'),
 (3, 'Auditor COLOG', 'Pode visualizar todos os assuntos e criar notas de auditoria. Acesso amplo para auditoria do COLOG.'),
-(4, 'Editor', 'Pode criar novos assuntos e visualizar o sistema. Responsável pela criação e edição de conteúdo.');
+(4, 'Editor', 'Pode criar novos assuntos e visualizar o sistema. Responsável pela criação e edição de conteúdo.'),
+(5, 'Cadastro de Usuário', 'Pode visualizar e gerenciar sua própria chefia. Acesso restrito a funções de cadastro.');
 
 -- --------------------------------------------------------
 

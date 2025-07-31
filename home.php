@@ -620,7 +620,7 @@ if (isset($_SESSION['divisao_id'])) {
             <!-- Footer -->
             <footer class="bg-black text-white py-2 md:py-3 px-4 md:px-6 text-center text-xs md:text-sm">
                 <div class="hidden md:block">
-                    Exército Brasileiro • Comando Logístico • Chefia de Material • SMU, Bloco C, Térreo. CEP: 70630-901 • Brasília DF • Divisão de Planejamento, Integração e Controle • Ramal 4374 / 4161
+                    Exército Brasileiro • Comando Logístico • Chefia de Material • SMU, Bloco C, Térreo. CEP: 70630-901 • Brasília DF • Divisão de Planejamento, Integração e Controle • Ramal 4374 / 5451
                 </div>
                 <div class="md:hidden">
                     Exército Brasileiro • COLOG<br>
@@ -742,6 +742,7 @@ if (isset($_SESSION['divisao_id'])) {
                         <option value="2">Auditor OM/Chefia</option>
                         <option value="3">Auditor COLOG</option>
                         <option value="4">Editor</option>
+                        <option value="5">Cadastro de Usuário</option>
                     </select>
                 </div>
 
@@ -750,8 +751,13 @@ if (isset($_SESSION['divisao_id'])) {
                     <input type="text" name="nome" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Senha</label>
-                    <input type="password" name="senha" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Senha Padrão</label>
+                    <div class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600">
+                        A senha padrão será igual à Identidade Militar
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">O usuário será obrigado a alterar a senha no primeiro login</p>
+                    <!-- Campo oculto para manter compatibilidade com o JavaScript -->
+                    <input type="hidden" name="senha" value="default">
                 </div>
 
                 <div>
@@ -780,6 +786,52 @@ if (isset($_SESSION['divisao_id'])) {
                             Adicionar usuário
                         </button>
                     </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Alteração de Senha Obrigatória -->
+    <div id="primeiroLoginModal" class="modal" style="z-index: 1001;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-red-600">Alteração de Senha Obrigatória</h3>
+                <!-- Remover botão X para forçar alteração -->
+            </div>
+            
+            <div class="mb-4 p-4 bg-yellow-100 border border-yellow-400 rounded-lg">
+                <p class="text-sm text-yellow-800">
+                    <strong>Atenção:</strong> Este é seu primeiro acesso ao sistema. Por motivos de segurança, 
+                    você deve alterar sua senha antes de continuar.
+                </p>
+            </div>
+            
+            <form id="primeiroLoginForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Senha Atual</label>
+                    <input type="password" name="senha_atual" required 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="Digite sua senha atual">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nova Senha</label>
+                    <input type="password" name="nova_senha" required minlength="6"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="Digite sua nova senha (mínimo 6 caracteres)">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Confirmar Nova Senha</label>
+                    <input type="password" name="confirmar_senha" required minlength="6"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="Confirme sua nova senha">
+                </div>
+
+                <div class="flex justify-end">
+                    <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                        Alterar Senha
+                    </button>
                 </div>
             </form>
         </div>
@@ -1106,12 +1158,21 @@ if (isset($_SESSION['divisao_id'])) {
             nome: "<?php echo addslashes($usuarioNome); ?>",
             pg: "<?php echo addslashes($_SESSION['pg'] ?? ''); echo " -"; ?>",
             divisao: "<?php echo addslashes($usuarioDivisao); ?>",
-            perfil: <?php echo isset($_SESSION['perfil_id']) ? (int)$_SESSION['perfil_id'] : (isset($perfil) ? (int)$perfil : 2); ?> // 1=Suporte Técnico, 2=Auditor OM/Chefia, 3=Auditor COLOG, 4=Editor
+            perfil: <?php echo isset($_SESSION['perfil_id']) ? (int)$_SESSION['perfil_id'] : (isset($perfil) ? (int)$perfil : 2); ?>, // 1=Suporte Técnico, 2=Auditor OM/Chefia, 3=Auditor COLOG, 4=Editor, 5=Cadastro de Usuário
+            chefia_id: <?php echo isset($_SESSION['chefia_id']) ? (int)$_SESSION['chefia_id'] : 'null'; ?>,
+            primeiro_login: <?php echo isset($_SESSION['primeiro_login']) && $_SESSION['primeiro_login'] ? 'true' : 'false'; ?>
         };
 
         // Exibir/ocultar abas do sidebar conforme perfil
         document.addEventListener('DOMContentLoaded', function() {
-            // 1=Suporte Técnico, 2=Auditor OM/Chefia, 3=Auditor COLOG, 4=Editor
+            // Verificar se é o primeiro login e mostrar modal obrigatório
+            if (currentUser.primeiro_login) {
+                document.getElementById('primeiroLoginModal').style.display = 'block';
+                // Bloquear interação com o resto da página
+                document.body.style.overflow = 'hidden';
+            }
+            
+            // 1=Suporte Técnico, 2=Auditor OM/Chefia, 3=Auditor COLOG, 4=Editor, 5=Cadastro de Usuário
             if (currentUser.perfil === 1) {
                 // Suporte Técnico: vê tudo, incluindo filtro de chefia
                 const chefiaFilterSection = document.getElementById('chefiaFilterSection');
@@ -1149,6 +1210,17 @@ if (isset($_SESSION['divisao_id'])) {
                 // Editor: não pode ver "Usuários" e "OM", vê apenas assuntos da sua divisão
                 document.querySelector("a[onclick=\"switchTab('usuarios')\"]").style.display = 'none';
                 document.querySelector("a[onclick=\"switchTab('om')\"]").style.display = 'none';
+            } else if (currentUser.perfil === 5) {
+                // Cadastro de Usuário: só pode ver "Usuários" e "OM", não vê resumo nem assuntos
+                document.querySelector("a[onclick=\"switchTab('resumo')\"]").style.display = 'none';
+                document.querySelector("a[onclick=\"switchTab('todos')\"]").style.display = 'none';
+                
+                // Ocultar botão de adicionar chefia para perfil 5
+                const addChefiaBtn = document.getElementById('addChefiaBtn');
+                if (addChefiaBtn) addChefiaBtn.style.display = 'none';
+                
+                // Redirecionar automaticamente para a aba de usuários ao carregar
+                setTimeout(() => switchTab('usuarios'), 100);
             } // Suporte Técnico vê tudo
         });
         
@@ -1169,8 +1241,10 @@ if (isset($_SESSION['divisao_id'])) {
             try {
                 const res = await fetch('api/get_usuarios.php');
                 usuarios = await res.json();
+                console.log('Usuários carregados:', usuarios.length);
                 renderUsuariosTable(usuarios);
             } catch (err) {
+                console.error('Erro ao carregar usuários:', err);
                 // Silently handle error
             }
         }
@@ -1180,8 +1254,11 @@ if (isset($_SESSION['divisao_id'])) {
             try {
                 const res = await fetch('api/get_chefias.php');
                 chefias = await res.json();
+                console.log('Chefias carregadas:', chefias.length);
+                console.log('Dados das chefias:', chefias);
                 renderChefiasTable(chefias);
             } catch (err) {
+                console.error('Erro ao carregar chefias:', err);
                 // Silently handle error
             }
         }
@@ -1191,8 +1268,10 @@ if (isset($_SESSION['divisao_id'])) {
             try {
                 const res = await fetch('api/get_divisoes.php');
                 divisoes = await res.json();
+                console.log('Divisões carregadas:', divisoes.length);
                 renderDivisoesTable(divisoes);
             } catch (err) {
+                console.error('Erro ao carregar divisões:', err);
                 // Silently handle error
             }
         }
@@ -1315,14 +1394,40 @@ if (isset($_SESSION['divisao_id'])) {
                     applyFilters();
                     break;
                 case 'usuarios':
-                    renderUsuariosTable(usuarios);
-                    updateTotalCount(usuarios.length, 'usuários');
-                    setupUsuarioFilters();
+                    // Garantir que todos os dados necessários estejam carregados
+                    Promise.all([
+                        usuarios.length === 0 ? fetchUsuarios() : Promise.resolve(),
+                        chefias.length === 0 ? fetchChefias() : Promise.resolve(),
+                        divisoes.length === 0 ? fetchDivisoes() : Promise.resolve()
+                    ]).then(() => {
+                        renderUsuariosTable(usuarios);
+                        // Aplicar contagem correta baseada no perfil
+                        let usuariosParaContar = usuarios;
+                        if (currentUser.perfil === 5) {
+                            usuariosParaContar = usuarios.filter(usuario => usuario.chefia_id === currentUser.chefia_id);
+                        }
+                        updateTotalCount(usuariosParaContar.length, 'usuários');
+                        setupUsuarioFilters();
+                    });
                     break;
                 case 'om':
-                    renderChefiasTable(chefias);
-                    renderDivisoesTable(divisoes);
-                    updateTotalCount(chefias.length + divisoes.length, 'registros');
+                    // Garantir que chefias e divisões estejam carregadas
+                    Promise.all([
+                        chefias.length === 0 ? fetchChefias() : Promise.resolve(),
+                        divisoes.length === 0 ? fetchDivisoes() : Promise.resolve()
+                    ]).then(() => {
+                        renderChefiasTable(chefias);
+                        renderDivisoesTable(divisoes);
+                        // Aplicar contagem correta baseada no perfil
+                        let chefiasParaContar = chefias;
+                        let divisoesParaContar = divisoes;
+                        if (currentUser.perfil === 5) {
+                            divisoesParaContar = divisoes.filter(divisao => divisao.chefia_id === currentUser.chefia_id);
+                            // Para chefias, só conta a própria chefia
+                            chefiasParaContar = chefias.filter(chefia => chefia.id === currentUser.chefia_id);
+                        }
+                        updateTotalCount(chefiasParaContar.length + divisoesParaContar.length, 'registros');
+                    });
                     break;
             }
         }
@@ -1575,6 +1680,7 @@ if (isset($_SESSION['divisao_id'])) {
                 case 2: return 'Auditor OM/Chefia';
                 case 3: return 'Auditor COLOG';
                 case 4: return 'Editor';
+                case 5: return 'Cadastro de Usuário';
                 default: return 'Não definido';
             }
         }
@@ -1784,8 +1890,15 @@ if (isset($_SESSION['divisao_id'])) {
             const tbody = document.getElementById('usuariosTableBody');
             tbody.innerHTML = '';
             
-            if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">Nenhum usuário encontrado</td></tr>';
+            // Filtrar dados baseado no perfil do usuário
+            let filteredData = data;
+            if (currentUser.perfil === 5) { // Cadastro de Usuário
+                // Só pode ver usuários da sua chefia
+                filteredData = data.filter(usuario => usuario.chefia_id === currentUser.chefia_id);
+            }
+            
+            if (filteredData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-4 text-center text-gray-500">Nenhum usuário encontrado</td></tr>';
                 return;
             }
             
@@ -1794,11 +1907,30 @@ if (isset($_SESSION['divisao_id'])) {
                 if (perfilId == 2) return 'Auditor OM/Chefia';
                 if (perfilId == 3) return 'Auditor COLOG';
                 if (perfilId == 4) return 'Editor';
+                if (perfilId == 5) return 'Cadastro de Usuário';
                 return '-';
             };
-            data.forEach(usuario => {
+            
+            filteredData.forEach(usuario => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-50';
+                
+                // Verificar se o usuário pode editar este registro
+                let canEdit = true;
+                if (currentUser.perfil === 5) {
+                    // Cadastro de Usuário só pode editar usuários da sua chefia
+                    canEdit = usuario.chefia_id === currentUser.chefia_id;
+                    
+                    // E não pode editar usuários com perfil de Suporte Técnico (perfil 1)
+                    if (usuario.perfil_id == 1) {
+                        canEdit = false;
+                    }
+                }
+                
+                const editButton = canEdit ? 
+                    `<button onclick="editUsuario(${usuario.id})" class="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700">Editar</button>` :
+                    `<span class="px-3 py-1 bg-gray-300 text-gray-500 text-xs rounded">Sem permissão</span>`;
+                
                 row.innerHTML = `
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${usuario.idt_Mil}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${usuario.pg}</td>
@@ -1807,7 +1939,7 @@ if (isset($_SESSION['divisao_id'])) {
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${usuario.divisao}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${perfilLabel(usuario.perfil_id)}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        <button onclick="editUsuario(${usuario.id})" class="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700">Editar</button>
+                        ${editButton}
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -1829,21 +1961,61 @@ if (isset($_SESSION['divisao_id'])) {
                     return usuario[key].toLowerCase().includes(filters[key]);
                 });
             });
-
+            
+            // Aplicar filtro adicional baseado no perfil, mas não na renderização inicial
+            // O filtro por perfil já é aplicado na renderUsuariosTable
             renderUsuariosTable(filtered);
             updateTotalCount(filtered.length, 'usuários');
         }
 
         function updateUsuarioSelects() {
+            console.log('updateUsuarioSelects chamada, chefias disponíveis:', chefias.length);
+            console.log('currentUser.perfil:', currentUser.perfil, 'currentUser.chefia_id:', currentUser.chefia_id);
+            
             // Atualizar select de chefias
             const chefiaSelect = document.getElementById('usuarioChefiaSelect');
             chefiaSelect.innerHTML = '<option value="">Selecione uma chefia</option>';
             
-            chefias.forEach(chefia => {
+            // Verificar se as chefias foram carregadas
+            if (!chefias || chefias.length === 0) {
+                console.log('Nenhuma chefia disponível');
+                chefiaSelect.innerHTML = '<option value="">Aguarde... carregando chefias</option>';
+                return;
+            }
+            
+            // Para perfil 5 (Cadastro de Usuário), só mostrar sua própria chefia
+            let chefiasParaExibir = chefias;
+            if (currentUser.perfil === 5 && currentUser.chefia_id !== null && currentUser.chefia_id !== undefined) {
+                chefiasParaExibir = chefias.filter(chefia => chefia.id == currentUser.chefia_id); // Usar == em vez de === por causa dos tipos
+                console.log('Filtrado para perfil 5, chefia_id:', currentUser.chefia_id, 'chefias para exibir:', chefiasParaExibir.length);
+                
+                // Se o filtro não encontrou nenhuma chefia, mostrar todas como fallback
+                if (chefiasParaExibir.length === 0) {
+                    console.log('AVISO: Filtro por chefia_id não encontrou resultados. Mostrando todas as chefias como fallback.');
+                    chefiasParaExibir = chefias;
+                }
+            } else if (currentUser.perfil === 5) {
+                console.log('ATENÇÃO: Perfil 5 mas chefia_id é null/undefined. Mostrando todas as chefias.');
+            }
+            
+            console.log('Chefias finais para exibir:', chefiasParaExibir.length);
+            
+            if (chefiasParaExibir.length === 0) {
+                console.log('PROBLEMA: Nenhuma chefia será exibida após filtros!');
+                if (currentUser.perfil === 5) {
+                    chefiaSelect.innerHTML = '<option value="">Sua chefia não foi encontrada. Contate o administrador.</option>';
+                } else {
+                    chefiaSelect.innerHTML = '<option value="">Nenhuma chefia cadastrada no sistema</option>';
+                }
+                return;
+            }
+            
+            chefiasParaExibir.forEach(chefia => {
                 const option = document.createElement('option');
                 option.value = chefia.id;
                 option.textContent = chefia.nome;
                 chefiaSelect.appendChild(option);
+                console.log('Adicionada chefia:', chefia.nome, 'ID:', chefia.id);
             });
             
             // Remover listeners anteriores e adicionar novo evento de mudança para filtrar divisões
@@ -1868,6 +2040,12 @@ if (isset($_SESSION['divisao_id'])) {
                 return;
             }
             
+            // Verificar se as divisões foram carregadas
+            if (!divisoes || divisoes.length === 0) {
+                divisaoSelect.innerHTML = '<option value="">Aguarde... carregando divisões</option>';
+                return;
+            }
+            
             // Filtrar divisões pela chefia selecionada
             const divisoesFiltradas = divisoes.filter(divisao => divisao.chefia_id == chefiaId);
             
@@ -1884,8 +2062,22 @@ if (isset($_SESSION['divisao_id'])) {
             });
         }
 
-        function openUsuarioModal(isEdit = false) {
+        async function openUsuarioModal(isEdit = false) {
+            console.log('openUsuarioModal chamada, isEdit:', isEdit);
+            // Garantir que chefias e divisões estejam carregadas
+            if (chefias.length === 0) {
+                console.log('Carregando chefias...');
+                await fetchChefias();
+            }
+            if (divisoes.length === 0) {
+                console.log('Carregando divisões...');
+                await fetchDivisoes();
+            }
+            
+            console.log('Chefias disponíveis:', chefias.length, 'Divisões disponíveis:', divisoes.length);
+            console.log('Dados do currentUser antes de updateUsuarioSelects:', currentUser);
             updateUsuarioSelects();
+            console.log('updateUsuarioSelects concluída, abrindo modal...');
             document.getElementById('usuarioModal').style.display = 'block';
             
             const senhaField = document.querySelector('#usuarioForm input[name="senha"]');
@@ -1895,34 +2087,117 @@ if (isset($_SESSION['divisao_id'])) {
                 document.getElementById('saveUsuarioBtn').textContent = 'Salvar usuário';
                 document.getElementById('deleteUsuarioBtn').classList.remove('hidden');
                 
-                // Tornar senha opcional na edição
-                senhaField.required = false;
-                senhaField.removeAttribute('required'); // Força a remoção do atributo
-                senhaField.placeholder = 'Deixe em branco para manter a senha atual';
-                
-                // Encontrar e atualizar o label da senha
-                const senhaDiv = senhaField.closest('div');
-                const senhaLabel = senhaDiv.querySelector('label');
-                if (senhaLabel) {
-                    senhaLabel.textContent = 'Nova Senha (opcional)';
-                }
+                // Na edição, mostrar campo de senha tradicional
+                const senhaContainer = senhaField.closest('div');
+                senhaContainer.innerHTML = `
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Nova Senha (opcional)</label>
+                    <input type="password" name="senha" placeholder="Deixe em branco para manter a senha atual" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                `;
             } else {
                 document.getElementById('usuarioModalTitle').textContent = 'Adicionar Novo Usuário';
                 document.getElementById('saveUsuarioBtn').textContent = 'Adicionar usuário';
                 document.getElementById('deleteUsuarioBtn').classList.add('hidden');
                 editingUsuario = null;
                 
-                // Tornar senha obrigatória na criação
-                senhaField.required = true;
-                senhaField.setAttribute('required', 'required'); // Força a adição do atributo
-                senhaField.placeholder = '';
+                // Na criação, mostrar mensagem sobre senha padrão
+                const senhaContainer = senhaField.closest('div');
+                senhaContainer.innerHTML = `
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Senha Padrão</label>
+                    <div class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600">
+                        A senha padrão será igual à Identidade Militar
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">O usuário será obrigado a alterar a senha no primeiro login</p>
+                    <input type="hidden" name="senha" value="default">
+                `;
+            }
+            
+            // Para perfil 5 (Cadastro de Usuário), pré-selecionar e desabilitar a chefia
+            if (currentUser.perfil === 5) {
+                const chefiaSelect = document.getElementById('usuarioChefiaSelect');
                 
-                // Encontrar e atualizar o label da senha
-                const senhaDiv = senhaField.closest('div');
-                const senhaLabel = senhaDiv.querySelector('label');
-                if (senhaLabel) {
-                    senhaLabel.textContent = 'Senha';
+                // Aguardar um pequeno delay para garantir que o select foi populado
+                setTimeout(() => {
+                    chefiaSelect.value = currentUser.chefia_id;
+                    // Em vez de disabled, fazer readonly visualmente mas funcional
+                    chefiaSelect.style.backgroundColor = '#f3f4f6';
+                    chefiaSelect.style.cursor = 'not-allowed';
+                    // Prevenir mudanças mas permitir que o valor seja enviado
+                    chefiaSelect.addEventListener('mousedown', (e) => e.preventDefault());
+                    chefiaSelect.addEventListener('keydown', (e) => e.preventDefault());
+                    
+                    console.log('Perfil 5: chefia selecionada para:', currentUser.chefia_id, 'valor atual:', chefiaSelect.value);
+                    
+                    // Disparar evento change para atualizar divisões
+                    chefiaSelect.dispatchEvent(new Event('change'));
+                }, 100);
+                
+                // Restringir opções de perfil apenas quando criando novo usuário
+                if (!isEdit) {
+                    const perfilSelect = document.getElementById('usuarioPerfilSelect');
+                    perfilSelect.innerHTML = `
+                        <option value="">Selecione o perfil</option>
+                        <option value="2">Auditor OM/Chefia</option>
+                        <option value="4">Editor</option>
+                    `;
+                } else {
+                    // Na edição, usuário perfil 5 tem restrições específicas
+                    const perfilSelect = document.getElementById('usuarioPerfilSelect');
+                    const usuarioAtual = editingUsuario;
+                    
+                    // Verificar se está editando seu próprio perfil ou perfil de Suporte Técnico
+                    const isEditandoProprioUsuario = usuarioAtual && usuarioAtual.perfil_id == 5;
+                    const isEditandoSuporteTecnico = usuarioAtual && usuarioAtual.perfil_id == 1;
+                    
+                    if (isEditandoProprioUsuario) {
+                        // Não pode alterar seu próprio perfil - desabilitar select
+                        perfilSelect.innerHTML = `<option value="5">Cadastro de Usuário (não editável)</option>`;
+                        perfilSelect.disabled = true;
+                        perfilSelect.style.backgroundColor = '#f3f4f6';
+                        perfilSelect.style.cursor = 'not-allowed';
+                    } else if (isEditandoSuporteTecnico) {
+                        // Não pode alterar perfil de Suporte Técnico - desabilitar select
+                        perfilSelect.innerHTML = `<option value="1">Suporte Técnico (não editável)</option>`;
+                        perfilSelect.disabled = true;
+                        perfilSelect.style.backgroundColor = '#f3f4f6';
+                        perfilSelect.style.cursor = 'not-allowed';
+                    } else {
+                        // Para outros usuários, pode editar normalmente (mas só perfis 2 e 4)
+                        let optionsHTML = `<option value="">Selecione o perfil</option>`;
+                        
+                        // Sempre incluir as opções que podem criar
+                        optionsHTML += `<option value="2">Auditor OM/Chefia</option>`;
+                        optionsHTML += `<option value="4">Editor</option>`;
+                        
+                        // Se o usuário atual tem perfil 3 (Auditor COLOG), incluir para manter a consistência
+                        if (usuarioAtual && usuarioAtual.perfil_id == 3) {
+                            optionsHTML += `<option value="3">Auditor COLOG (atual)</option>`;
+                        }
+                        
+                        perfilSelect.innerHTML = optionsHTML;
+                        perfilSelect.disabled = false;
+                        perfilSelect.style.backgroundColor = '';
+                        perfilSelect.style.cursor = '';
+                    }
                 }
+            } else {
+                // Reabilitar o select para outros perfis e restaurar todas as opções
+                const chefiaSelect = document.getElementById('usuarioChefiaSelect');
+                chefiaSelect.disabled = false;
+                chefiaSelect.style.backgroundColor = '';
+                chefiaSelect.style.cursor = '';
+                // Remover listeners de prevenção se existirem
+                chefiaSelect.removeEventListener('mousedown', (e) => e.preventDefault());
+                chefiaSelect.removeEventListener('keydown', (e) => e.preventDefault());
+                
+                const perfilSelect = document.getElementById('usuarioPerfilSelect');
+                perfilSelect.innerHTML = `
+                    <option value="">Selecione o perfil</option>
+                    <option value="1">Suporte Técnico</option>
+                    <option value="2">Auditor OM/Chefia</option>
+                    <option value="3">Auditor COLOG</option>
+                    <option value="4">Editor</option>
+                    <option value="5">Cadastro de Usuário</option>
+                `;
             }
         }
 
@@ -1931,38 +2206,71 @@ if (isset($_SESSION['divisao_id'])) {
             document.getElementById('usuarioForm').reset();
             editingUsuario = null;
             
-            // Resetar campos para o estado padrão
+            // Resetar o campo de senha para o estado padrão de criação
             const senhaField = document.querySelector('#usuarioForm input[name="senha"]');
-            senhaField.required = true;
-            senhaField.placeholder = '';
+            const senhaContainer = senhaField.closest('div');
+            senhaContainer.innerHTML = `
+                <label class="block text-sm font-medium text-gray-700 mb-2">Senha Padrão</label>
+                <div class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600">
+                    A senha padrão será igual à Identidade Militar
+                </div>
+                <p class="text-xs text-gray-500 mt-1">O usuário será obrigado a alterar a senha no primeiro login</p>
+                <input type="hidden" name="senha" value="default">
+            `;
             
-            // Encontrar e resetar o label da senha
-            const senhaDiv = senhaField.closest('div');
-            const senhaLabel = senhaDiv.querySelector('label');
-            if (senhaLabel) {
-                senhaLabel.textContent = 'Senha';
-            }
+            // Resetar estilo do select de chefia
+            const chefiaSelect = document.getElementById('usuarioChefiaSelect');
+            chefiaSelect.disabled = false;
+            chefiaSelect.style.backgroundColor = '';
+            chefiaSelect.style.cursor = '';
+            
+            // Resetar estilo do select de perfil
+            const perfilSelect = document.getElementById('usuarioPerfilSelect');
+            perfilSelect.disabled = false;
+            perfilSelect.style.backgroundColor = '';
+            perfilSelect.style.cursor = '';
             
             // Resetar o select de divisões para o estado inicial
             updateDivisoesByChefia('');
         }
 
-        function editUsuario(usuarioId) {
+        async function editUsuario(usuarioId) {
             const usuario = usuarios.find(u => u.id == usuarioId);
             if (!usuario) {
                 return;
             }
+            
+            // Verificar permissões para perfil 5 (Cadastro de Usuário)
+            if (currentUser.perfil === 5) {
+                // Não pode editar usuários fora da sua chefia
+                if (usuario.chefia_id !== currentUser.chefia_id) {
+                    alert('Você só pode editar usuários da sua chefia.');
+                    return;
+                }
+                
+                // Não pode editar usuários com perfil de Suporte Técnico (perfil 1)
+                if (usuario.perfil_id == 1) {
+                    alert('Você não tem permissão para editar usuários com perfil de Suporte Técnico.');
+                    return;
+                }
+            }
 
             editingUsuario = usuario;
             
+            // Abrir modal primeiro para que os selects sejam populados corretamente
+            await openUsuarioModal(true);
+            
+            // Agora preencher os campos
             document.getElementById('usuarioId').value = usuario.id;
             document.querySelector('#usuarioForm input[name="idt_Mil"]').value = usuario.idt_Mil;
             document.querySelector('#usuarioForm select[name="pg"]').value = usuario.pg;
             document.querySelector('#usuarioForm input[name="nome"]').value = usuario.nome;
-            document.querySelector('#usuarioForm input[name="senha"]').value = '';
-            document.getElementById('usuarioPerfilSelect').value = usuario.perfil_id || '';
+            // Não preencher senha - o campo será configurado corretamente pelo openUsuarioModal
             
+            // Aguardar um pouco mais para garantir que o select de perfil foi populado corretamente
             setTimeout(() => {
+                document.getElementById('usuarioPerfilSelect').value = usuario.perfil_id || '';
+                
                 const chefiaSelect = document.querySelector('#usuarioForm select[name="chefia"]');
                 chefiaSelect.value = usuario.chefia_id;
                 chefiaSelect.dispatchEvent(new Event('change'));
@@ -1970,8 +2278,7 @@ if (isset($_SESSION['divisao_id'])) {
                 setTimeout(() => {
                     document.querySelector('#usuarioForm select[name="divisao"]').value = usuario.divisao_id;
                 }, 50);
-            }, 100);
-            openUsuarioModal(true);
+            }, 150);
         }
 
         // Funções do modal Minha Conta
@@ -2014,6 +2321,49 @@ if (isset($_SESSION['divisao_id'])) {
             }
         }
 
+        // Event listener para o formulário de primeiro login
+        document.getElementById('primeiroLoginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const novaSenha = formData.get('nova_senha');
+            const confirmarSenha = formData.get('confirmar_senha');
+            
+            // Validar se as senhas coincidem
+            if (novaSenha !== confirmarSenha) {
+                alert('As senhas não coincidem. Tente novamente.');
+                return;
+            }
+            
+            // Validar tamanho mínimo da senha
+            if (novaSenha.length < 6) {
+                alert('A nova senha deve ter pelo menos 6 caracteres.');
+                return;
+            }
+            
+            try {
+                const response = await fetch('api/alterar_senha_primeiro_login.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Senha alterada com sucesso!');
+                    // Fechar modal e reabilitar página
+                    document.getElementById('primeiroLoginModal').style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    // Atualizar flag de primeiro login
+                    currentUser.primeiro_login = false;
+                } else {
+                    alert('Erro ao alterar senha: ' + result.message);
+                }
+            } catch (error) {
+                alert('Erro ao conectar com o servidor. Tente novamente.');
+            }
+        });
+
         // Event listener para o formulário da conta
         document.getElementById('contaForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -2054,21 +2404,37 @@ if (isset($_SESSION['divisao_id'])) {
             const tbody = document.getElementById('chefiasTableBody');
             tbody.innerHTML = '';
             
-            if (data.length === 0) {
+            // Filtrar dados baseado no perfil do usuário
+            let filteredData = data;
+            if (currentUser.perfil === 5) { // Cadastro de Usuário
+                // Só pode ver sua própria chefia
+                filteredData = data.filter(chefia => chefia.id === currentUser.chefia_id);
+            }
+            
+            if (filteredData.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="2" class="px-6 py-4 text-center text-gray-500">Nenhuma chefia encontrada</td></tr>';
                 return;
             }
             
-            data.forEach(chefia => {
+            filteredData.forEach(chefia => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-50';
+                
+                // Verificar se o usuário pode editar este registro
+                let canEdit = true;
+                if (currentUser.perfil === 5) {
+                    // Cadastro de Usuário não pode editar chefias
+                    canEdit = false;
+                }
+                
+                const editButton = canEdit ? 
+                    `<button onclick="editChefia(${chefia.id})" class="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700">Editar</button>` :
+                    `<span class="px-3 py-1 bg-gray-300 text-gray-500 text-xs rounded">Sem permissão</span>`;
                 
                 row.innerHTML = `
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${chefia.nome}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        <button onclick="editChefia(${chefia.id})" class="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700">
-                            Editar
-                        </button>
+                        ${editButton}
                     </td>
                 `;
                 
@@ -2115,11 +2481,20 @@ if (isset($_SESSION['divisao_id'])) {
         function renderDivisoesTable(data) {
             const tbody = document.getElementById('divisoesTableBody');
             tbody.innerHTML = '';
-            if (data.length === 0) {
+            
+            // Filtrar dados baseado no perfil do usuário
+            let filteredData = data;
+            if (currentUser.perfil === 5) { // Cadastro de Usuário
+                // Só pode ver divisões da sua chefia
+                filteredData = data.filter(divisao => divisao.chefia_id === currentUser.chefia_id);
+            }
+            
+            if (filteredData.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="3" class="px-6 py-4 text-center text-gray-500">Nenhuma divisão encontrada</td></tr>';
                 return;
             }
-            data.forEach(divisao => {
+            
+            filteredData.forEach(divisao => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-50';
                 
@@ -2127,11 +2502,22 @@ if (isset($_SESSION['divisao_id'])) {
                 const chefia = chefias.find(c => c.id === divisao.chefia_id);
                 const chefiaNome = chefia ? chefia.nome : '-';
                 
+                // Verificar se o usuário pode editar este registro
+                let canEdit = true;
+                if (currentUser.perfil === 5) {
+                    // Cadastro de Usuário só pode editar divisões da sua chefia
+                    canEdit = divisao.chefia_id === currentUser.chefia_id;
+                }
+                
+                const editButton = canEdit ? 
+                    `<button onclick="editDivisao(${divisao.id})" class="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"> Editar </button>` :
+                    `<span class="px-3 py-1 bg-gray-300 text-gray-500 text-xs rounded">Sem permissão</span>`;
+                
                 row.innerHTML = `
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${divisao.nome}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${divisao.chefia_nome || '-'}</td> 
                     <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        <button onclick="editDivisao(${divisao.id})" class="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"> Editar </button>
+                        ${editButton}
                     </td>
                 `;
                 tbody.appendChild(row);
@@ -2142,7 +2528,19 @@ if (isset($_SESSION['divisao_id'])) {
             const select = document.getElementById('divisaoChefiaSelect');
             select.innerHTML = '<option value="">Selecione uma chefia</option>';
             
-            chefias.forEach(chefia => {
+            // Verificar se as chefias foram carregadas
+            if (!chefias || chefias.length === 0) {
+                select.innerHTML = '<option value="">Aguarde... carregando chefias</option>';
+                return;
+            }
+            
+            // Para perfil 5 (Cadastro de Usuário), só mostrar sua própria chefia
+            let chefiasParaExibir = chefias;
+            if (currentUser.perfil === 5) {
+                chefiasParaExibir = chefias.filter(chefia => chefia.id === currentUser.chefia_id);
+            }
+            
+            chefiasParaExibir.forEach(chefia => {
                 const option = document.createElement('option');
                 option.value = chefia.id; // Usa o ID da chefia
                 option.textContent = chefia.nome || chefia.chefia; // Usa o nome da chefia
@@ -2150,7 +2548,12 @@ if (isset($_SESSION['divisao_id'])) {
             });
         }
 
-        function openDivisaoModal(isEdit = false) {
+        async function openDivisaoModal(isEdit = false) {
+            // Garantir que chefias estejam carregadas
+            if (chefias.length === 0) {
+                await fetchChefias();
+            }
+            
             updateChefiaSelect();
             
             if (chefias.length === 0) {
@@ -2170,6 +2573,17 @@ if (isset($_SESSION['divisao_id'])) {
                 document.getElementById('deleteDivisaoBtn').classList.add('hidden');
                 editingDivisao = null;
             }
+            
+            // Para perfil 5 (Cadastro de Usuário), pré-selecionar e desabilitar a chefia
+            if (currentUser.perfil === 5) {
+                const chefiaSelect = document.getElementById('divisaoChefiaSelect');
+                chefiaSelect.value = currentUser.chefia_id;
+                chefiaSelect.disabled = true;
+            } else {
+                // Reabilitar o select para outros perfis
+                const chefiaSelect = document.getElementById('divisaoChefiaSelect');
+                chefiaSelect.disabled = false;
+            }
         }
 
         function closeDivisaoModal() {
@@ -2178,9 +2592,15 @@ if (isset($_SESSION['divisao_id'])) {
             editingDivisao = null;
         }
 
-        function editDivisao(divisaoId) {
+        async function editDivisao(divisaoId) {
             const divisao = divisoes.find(d => d.id == divisaoId);
             if (!divisao) {
+                return;
+            }
+            
+            // Verificar permissões para perfil 5 (Cadastro de Usuário)
+            if (currentUser.perfil === 5 && divisao.chefia_id !== currentUser.chefia_id) {
+                alert('Você só pode editar divisões da sua chefia.');
                 return;
             }
 
@@ -2193,7 +2613,7 @@ if (isset($_SESSION['divisao_id'])) {
                 document.getElementById('divisaoChefiaSelect').value = divisao.chefia_id;
             }, 100);
 
-            openDivisaoModal(true);
+            await openDivisaoModal(true);
         }
 
         // Modal functions
@@ -2212,9 +2632,9 @@ if (isset($_SESSION['divisao_id'])) {
         // Event listeners
         document.getElementById('addAssuntoBtn').addEventListener('click', openModal);
         
-        document.getElementById('addUsuarioBtn').addEventListener('click', () => openUsuarioModal(false));
+        document.getElementById('addUsuarioBtn').addEventListener('click', async () => await openUsuarioModal(false));
         document.getElementById('addChefiaBtn').addEventListener('click', () => openChefiaModal(false));
-        document.getElementById('addDivisaoBtn').addEventListener('click', () => openDivisaoModal(false));
+        document.getElementById('addDivisaoBtn').addEventListener('click', async () => await openDivisaoModal(false));
 
         document.getElementById('configBtn').addEventListener('click', function(e) {
             e.stopPropagation();
@@ -2238,21 +2658,54 @@ if (isset($_SESSION['divisao_id'])) {
             e.preventDefault();
             (async () => {
                 const formData = new FormData(this);
+                
+                // Debug: Ver todos os dados do formulário
+                console.log('FormData original:');
+                for (let [key, value] of formData.entries()) {
+                    console.log(`${key}: "${value}"`);
+                }
+                
                 const usuarioData = {
                     id: formData.get('id'),
                     idt_Mil: formData.get('idt_Mil'),
                     pg: formData.get('pg'),
                     nome: formData.get('nome'),
-                    chefia: formData.get('chefia'),
-                    divisao: formData.get('divisao'),
+                    chefia_id: formData.get('chefia'), // Enviar como chefia_id
+                    divisao_id: formData.get('divisao'), // Enviar como divisao_id
                     perfil_id: formData.get('perfil_id')
                 };
+                
+                // Para perfil 5, se os campos estiverem vazios devido ao disabled, usar os valores corretos
+                if (currentUser.perfil === 5) {
+                    if (!usuarioData.chefia_id) {
+                        usuarioData.chefia_id = currentUser.chefia_id;
+                        console.log('Perfil 5: Corrigindo chefia_id para:', currentUser.chefia_id);
+                    }
+                }
+                
+                console.log('usuarioData após mapeamento:', usuarioData);
+                
+                // Verificação adicional dos campos obrigatórios
+                if (!usuarioData.chefia_id) {
+                    alert('Por favor, selecione uma chefia.');
+                    return;
+                }
+                if (!usuarioData.divisao_id) {
+                    alert('Por favor, selecione uma divisão.');
+                    return;
+                }
+                if (!usuarioData.perfil_id) {
+                    alert('Por favor, selecione um perfil.');
+                    return;
+                }
                 
                 // Só inclui senha se não estiver vazia ou se for um novo usuário
                 const senha = formData.get('senha');
                 if (!editingUsuario || (senha && senha.trim() !== '')) {
                     usuarioData.senha = senha;
                 }
+                
+                console.log('Dados do usuário sendo enviados:', usuarioData);
                 
                 try {
                     const url = editingUsuario ? 'api/edit_usuario.php' : 'api/add_usuario.php';

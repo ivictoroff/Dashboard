@@ -7,11 +7,11 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit();
 }
 
-// Verificar se o usuário tem permissão (apenas Suporte Técnico)
+// Verificar se o usuário tem permissão (Suporte Técnico ou Cadastro de Usuário)
 $perfilId = $_SESSION['perfil_id'] ?? 2;
-if ($perfilId !== 1) { // 1=Suporte Técnico
+if ($perfilId !== 1 && $perfilId !== 5) { // 1=Suporte Técnico, 5=Cadastro de Usuário
     http_response_code(403);
-    echo json_encode(['error' => 'Permissão negada. Apenas Suporte Técnico pode gerenciar usuários.']);
+    echo json_encode(['error' => 'Permissão negada. Apenas Suporte Técnico e Cadastro de Usuário podem gerenciar usuários.']);
     exit();
 }
 
@@ -37,8 +37,8 @@ if (!$data || !isset($data['id'])) {
 $id = $data['id'];
 
 try {
-    // Verificar se o usuário existe
-    $stmt = $conn->prepare("SELECT id FROM usuarios WHERE id = ?");
+    // Verificar se o usuário existe e pegar dados para validação
+    $stmt = $conn->prepare("SELECT id, chefia_id FROM usuarios WHERE id = ?");
     $stmt->bind_param('i', $id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -48,7 +48,21 @@ try {
         echo json_encode(['error' => 'Usuário não encontrado']);
         exit();
     }
+    
+    $usuario = $result->fetch_assoc();
     $stmt->close();
+    
+    // Validações específicas para perfil 5 (Cadastro de Usuário)
+    if ($perfilId === 5) {
+        $chefiaUsuarioLogado = $_SESSION['chefia_id'] ?? null;
+        
+        // Só pode excluir usuários da sua própria chefia
+        if ($usuario['chefia_id'] !== $chefiaUsuarioLogado) {
+            http_response_code(403);
+            echo json_encode(['error' => 'Você só pode excluir usuários da sua própria chefia.']);
+            exit();
+        }
+    }
     
     // Não permitir que o usuário exclua a si mesmo
     if ($id == $_SESSION['usuario_id']) {

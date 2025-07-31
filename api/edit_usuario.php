@@ -10,11 +10,11 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit();
 }
 
-// Verificar se o usuário tem permissão (apenas Suporte Técnico)
+// Verificar se o usuário tem permissão (Suporte Técnico ou Cadastro de Usuário)
 $perfilId = $_SESSION['perfil_id'] ?? 2;
-if ($perfilId !== 1) { // 1=Suporte Técnico
+if ($perfilId !== 1 && $perfilId !== 5) { // 1=Suporte Técnico, 5=Cadastro de Usuário
     http_response_code(403);
-    echo json_encode(['error' => 'Permissão negada. Apenas Suporte Técnico pode gerenciar usuários.']);
+    echo json_encode(['error' => 'Permissão negada. Apenas Suporte Técnico e Cadastro de Usuário podem gerenciar usuários.']);
     exit();
 }
 
@@ -25,13 +25,16 @@ if (!$data) {
     exit;
 }
 
+// Log para debug - remover em produção
+error_log('Dados recebidos no edit_usuario.php: ' . print_r($data, true));
+
 $id = $data['id'] ?? '';
 $idt_Mil = trim($data['idt_Mil'] ?? '');
 $pg = trim($data['pg'] ?? '');
 $nome = trim($data['nome'] ?? '');
 $senha = $data['senha'] ?? '';
-$chefia_id = $data['chefia'] ?? null;
-$divisao_id = $data['divisao'] ?? null;
+$chefia_id = $data['chefia_id'] ?? null; // Usar chefia_id em vez de chefia
+$divisao_id = $data['divisao_id'] ?? null; // Usar divisao_id em vez de divisao
 $perfil_id = $data['perfil_id'] ?? null;
 
 // Converter strings vazias para null
@@ -40,9 +43,58 @@ $divisao_id = empty($divisao_id) ? null : (int)$divisao_id;
 $perfil_id = empty($perfil_id) ? null : (int)$perfil_id;
 
 if (!$id || !$idt_Mil || !$pg || !$nome || !$perfil_id || !$chefia_id || !$divisao_id) {
+    $missing = [];
+    if (!$id) $missing[] = 'id';
+    if (!$idt_Mil) $missing[] = 'idt_Mil';
+    if (!$pg) $missing[] = 'pg';
+    if (!$nome) $missing[] = 'nome';
+    if (!$perfil_id) $missing[] = 'perfil_id';
+    if (!$chefia_id) $missing[] = 'chefia_id';
+    if (!$divisao_id) $missing[] = 'divisao_id';
+    
     http_response_code(400);
-    echo json_encode(['error' => 'Preencha todos os campos obrigatórios.']);
+    echo json_encode(['error' => 'Campos obrigatórios faltando: ' . implode(', ', $missing)]);
     exit;
+}
+
+// Verificar se o usuário a ser editado existe e pegar seus dados atuais
+$stmt = $conn->prepare('SELECT chefia_id FROM usuarios WHERE id = ?');
+$stmt->bind_param('i', $id);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($result->num_rows === 0) {
+    $stmt->close();
+    http_response_code(404);
+    echo json_encode(['error' => 'Usuário não encontrado.']);
+    exit;
+}
+$usuarioAtual = $result->fetch_assoc();
+$stmt->close();
+
+// Validações específicas para perfil 5 (Cadastro de Usuário)
+if ($perfilId === 5) {
+    $chefiaUsuarioLogado = $_SESSION['chefia_id'] ?? null;
+    
+    // Só pode editar usuários da sua própria chefia
+    if ($usuarioAtual['chefia_id'] !== $chefiaUsuarioLogado) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Você só pode editar usuários da sua própria chefia.']);
+        exit;
+    }
+    
+    // Só pode manter/alterar para perfil 2 (Auditor OM/Chefia) ou 4 (Editor)
+    if ($perfil_id !== 2 && $perfil_id !== 4) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Você só pode definir perfil Auditor OM/Chefia ou Editor.']);
+        exit;
+    }
+    
+    // Não pode alterar a chefia do usuário para outra chefia
+    if ($chefia_id !== $chefiaUsuarioLogado) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Você não pode alterar a chefia do usuário.']);
+        exit;
+    }
 }
 
 // Validar se os IDs de chefia e divisão existem

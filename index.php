@@ -129,7 +129,7 @@ session_start();
 
     <!-- Footer -->
     <footer class="bg-black text-white py-3 px-6 text-center text-sm">
-        Exército Brasileiro • Comando Logístico • Chefia de Material • SMU, Bloco C, Térreo. CEP: 70630-901 • Brasília DF • Divisão de Planejamento, Integração e Controle • Ramal 4374 / 4161
+        Exército Brasileiro • Comando Logístico • Chefia de Material • SMU, Bloco C, Térreo. CEP: 70630-901 • Brasília DF • Divisão de Planejamento, Integração e Controle • Ramal 4374 / 5451
     </footer>
 
     <script>
