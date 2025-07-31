@@ -38,20 +38,6 @@ CREATE TABLE `acoes` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Despejando dados para a tabela `acoes`
---
-
-INSERT INTO `acoes` (`id`, `assunto_id`, `acao`, `providencia`, `estado`, `responsavel`, `dataAtualizacao`) VALUES
-(1, 1, 'Solicitar três orçamentos de diferentes fornecedores', 'Enviados emails para 5 fornecedores solicitando orçamentos detalhados', 'concluido', 4, '2025-07-30'),
-(2, 1, 'Analisar propostas técnicas e financeiras recebidas', '', 'pendente', 4, '2025-07-30'),
-(3, 2, 'Agendar revisão de todas as viaturas com a oficina credenciada', '', 'pendente', 4, '2025-07-30'),
-(4, 3, 'sdaf', 'fdsa', 'pendente', 4, '2025-07-30'),
-(5, 4, 'fdsa', 'fdsa', 'pendente', 4, '2025-07-30'),
-(6, 5, 'fdsa', 'fdsa', 'pendente', 4, '2025-07-30');
-
--- --------------------------------------------------------
-
---
 -- Estrutura para tabela `assuntos`
 --
 
@@ -65,19 +51,6 @@ CREATE TABLE `assuntos` (
   `criadoPor` int(11) NOT NULL,
   `ativo` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Despejando dados para a tabela `assuntos`
---
-
-INSERT INTO `assuntos` (`id`, `assunto`, `critico`, `prazo`, `estado`, `dataAtualizacao`, `criadoPor`, `ativo`) VALUES
-(1, 'Aquisição de equipamentos de informática para modernização do parque tecnológico', 'sim', '2025-08-07', 'pendente', '2025-07-30', 1, 1),
-(2, 'Manutenção preventiva das viaturas administrativas do comando', 'nao', '2025-08-07', 'pendente', '2025-07-30', 1, 1),
-(3, 'sdgsfdg', 'sim', '2025-08-08', 'pendente', '2025-07-30', 4, 1),
-(4, 'sdaf', 'sim', '2025-08-08', 'concluido', '2025-07-30', 4, 1),
-(5, 'fdsf', 'sim', '0001-11-11', 'pendente', '2025-07-30', 4, 1);
-
--- --------------------------------------------------------
 
 --
 -- Estrutura para tabela `chefia`
@@ -143,27 +116,6 @@ CREATE TABLE `historico` (
   `acao` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Despejando dados para a tabela `historico`
---
-
-INSERT INTO `historico` (`id`, `assunto_id`, `data`, `usuario`, `acao`) VALUES
-(1, 1, '2025-01-15', 1, 'Criou o assunto \"Aquisição de equipamentos de informática para modernização do parque tecnológico\"'),
-(2, 1, '2025-01-15', 1, 'Adicionou ação \"Solicitar três orçamentos de diferentes fornecedores\"'),
-(3, 2, '2025-01-14', 1, 'Criou o assunto \"Manutenção preventiva das viaturas administrativas do comando\"'),
-(4, 1, '2025-07-30', 4, 'Alterou o prazo de \"20/01/2025\" para \"07/08/2025\"'),
-(5, 2, '2025-07-30', 4, 'Alterou o prazo de \"10/02/2025\" para \"07/08/2025\"'),
-(6, 3, '2025-07-30', 4, 'Criou o assunto \"sdgsfdg\"'),
-(7, 3, '2025-07-30', 4, 'Adicionou ação \"sdaf\"'),
-(8, 4, '2025-07-30', 4, 'Criou o assunto \"sdaf\"'),
-(9, 4, '2025-07-30', 4, 'Adicionou ação \"fdsa\"'),
-(10, 5, '2025-07-30', 4, 'Criou o assunto \"fdsf\"'),
-(11, 5, '2025-07-30', 4, 'Adicionou ação \"fdsa\"'),
-(12, 3, '2025-07-30', 4, 'Alterou o prazo de \"11/11/0011\" para \"08/08/2025\"'),
-(13, 4, '2025-07-30', 4, 'Alterou o prazo de \"11/11/0001\" para \"08/08/2025\"'),
-(14, 4, '2025-07-30', 4, 'Alterou o estado de \"Pendente\" para \"Concluído\"'),
-(15, 1, '2025-07-30', 4, 'Excluiu o assunto: Aquisição de equipamentos de informática para modernização do parque tecnológico'),
-(16, 2, '2025-07-30', 4, 'Excluiu o assunto: Manutenção preventiva das viaturas administrativas do comando');
 
 -- --------------------------------------------------------
 
@@ -178,17 +130,6 @@ CREATE TABLE `notas_auditoria` (
   `nota` text NOT NULL,
   `data_criacao` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Despejando dados para a tabela `notas_auditoria`
---
-
-INSERT INTO `notas_auditoria` (`id`, `assunto_id`, `usuario_id`, `nota`, `data_criacao`) VALUES
-(1, 1, 4, 'Verificado que os orçamentos foram solicitados conforme protocolo. Recomendo acompanhar os prazos de resposta dos fornecedores.', '2025-01-16 13:30:00'),
-(2, 1, 5, 'Analisando as especificações técnicas solicitadas. Algumas podem estar superdimensionadas para a necessidade atual.', '2025-01-17 17:15:00'),
-(3, 2, 4, 'Assunto está dentro do prazo estabelecido. Sugerido verificar disponibilidade orçamentária antes do agendamento.', '2025-01-15 19:45:00');
-
--- --------------------------------------------------------
 
 --
 -- Estrutura para tabela `perfis`
@@ -234,11 +175,6 @@ CREATE TABLE `usuarios` (
 
 INSERT INTO `usuarios` (`id`, `idt_Mil`, `pg`, `nome`, `senha`, `divisao_id`, `chefia_id`, `perfil_id`) VALUES
 (1, '123456789', 'Sd', 'V Araujo', '$2y$10$KzC.k3gAS4MUqyOCPdUcyeTTaxukMXahlEJP/6CBCp39qZiBQ4MC.', 1, 3, 1),
-(2, '012345678', 'Gen Bda', 'Eron', '$2y$10$uK.UFspQsLa.cd9rgwLQueIH2zXrJesZjmfHgjzaBXuYpPAwm8elC', 8, 3, 2),
-(3, '12345678', 'Maj', 'Afonso Neto', '$2y$10$TIHIRZZTNBV6K9Dl7Ou/r.Nu.myYErKH6DTKGuuNtxUZI5rXcIwdu', 1, 3, 4),
-(4, '0123456789', 'Gen Div', 'Flavio Neiva', '$2y$10$xxyWWD4v7N5Rur2hZwKr7OMh6VvL.REDou4N0pOm9E6M7qMtwDa6i', 9, 8, 3),
-(5, '444555666', 'TC', 'Pedro Costa', '$2y$10$JzW3D8z5M6GyEAFn7VBNquQZ.Nkns5cUKiT6EDFMZIE1aR8zNFxfq', 4, 2, 4);
-
 --
 -- Índices para tabelas despejadas
 --

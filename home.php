@@ -586,7 +586,7 @@ if (isset($_SESSION['divisao_id'])) {
                         <div class="bg-white rounded-lg shadow">
                             <div class="p-4 md:p-6 border-b">
                                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                                    <h3 class="text-lg font-semibold">Divisões/Sessões</h3>
+                                    <h3 class="text-lg font-semibold">Divisões/Seção</h3>
                                     <button id="addDivisaoBtn" class="px-3 py-2 md:px-4 md:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs md:text-sm w-full sm:w-auto">
                                         + Adicionar divisão
                                     </button>
@@ -597,7 +597,7 @@ if (isset($_SESSION['divisao_id'])) {
                                     <thead class="bg-gray-50">
                                         <tr>
                                             <th class="px-3 py-3 md:px-4 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Divisão/Sessão
+                                                Divisão/Seção
                                             </th>
                                             <th class="px-3 py-3 md:px-4 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 OM/Chefia
@@ -1185,17 +1185,13 @@ if (isset($_SESSION['divisao_id'])) {
                     setupChefiaFilter();
                 }
             } else if (currentUser.perfil === 2) {
-                // Auditor OM/Chefia: não pode ver "Usuários" e "OM", vê assuntos da sua chefia
+                // Auditor OM/Chefia: não pode ver "Usuários" e "OM", pode criar e ver assuntos da sua chefia
                 document.querySelector("a[onclick=\"switchTab('usuarios')\"]").style.display = 'none';
                 document.querySelector("a[onclick=\"switchTab('om')\"]").style.display = 'none';
-                var addAssuntoBtn = document.getElementById('addAssuntoBtn');
-                if (addAssuntoBtn) addAssuntoBtn.style.display = 'none';
             } else if (currentUser.perfil === 3) {
-                // Auditor COLOG: não pode ver "Usuários" e "OM", mas pode ver filtro de chefia
+                // Auditor COLOG: não pode ver "Usuários" e "OM", pode criar e ver assuntos, tem filtro de chefia
                 document.querySelector("a[onclick=\"switchTab('usuarios')\"]").style.display = 'none';
                 document.querySelector("a[onclick=\"switchTab('om')\"]").style.display = 'none';
-                var addAssuntoBtn = document.getElementById('addAssuntoBtn');
-                if (addAssuntoBtn) addAssuntoBtn.style.display = 'none';
                 // Mostrar seção completa do filtro de chefia para Auditor COLOG
                 const chefiaFilterSection = document.getElementById('chefiaFilterSection');
                 if (chefiaFilterSection) {
@@ -1323,20 +1319,6 @@ if (isset($_SESSION['divisao_id'])) {
         function updateUserInfo() {
             const displayName = currentUser.pg ? `${currentUser.pg} ${currentUser.nome}` : currentUser.nome;
             document.getElementById('userInfo').textContent = `${displayName} - ${currentUser.divisao}`;
-        }
-
-        // Definir data atual no campo dataInicio
-        function setDataInicio() {
-            const hoje = new Date();
-            const ano = hoje.getFullYear();
-            const mes = String(hoje.getMonth() + 1).padStart(2, '0');
-            const dia = String(hoje.getDate()).padStart(2, '0');
-            const dataAtual = `${ano}-${mes}-${dia}`;
-            
-            const dataInicioField = document.getElementById('dataInicio');
-            if (dataInicioField) {
-                dataInicioField.value = dataAtual;
-            }
         }
 
         // Obter título baseado no filtro atual

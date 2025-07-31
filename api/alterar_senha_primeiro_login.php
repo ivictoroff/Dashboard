@@ -9,11 +9,6 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 }
 
 // Verificar se é realmente o primeiro login
-// Debug temporário
-error_log("DEBUG: primeiro_login isset: " . (isset($_SESSION['primeiro_login']) ? 'true' : 'false'));
-error_log("DEBUG: primeiro_login valor: " . ($_SESSION['primeiro_login'] ?? 'null'));
-error_log("DEBUG: primeiro_login tipo: " . gettype($_SESSION['primeiro_login'] ?? null));
-
 if (!isset($_SESSION['primeiro_login']) || !$_SESSION['primeiro_login']) {
     echo json_encode(['success' => false, 'message' => 'Operação não permitida']);
     exit();
