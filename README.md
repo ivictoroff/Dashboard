@@ -18,6 +18,7 @@ Sistema web para gerenciamento de assuntos críticos do Comando Logístico do Ex
 - **Auditor OM/Chefia**: Pode visualizar assuntos da sua chefia e criar notas de auditoria
 - **Auditor COLOG**: Pode visualizar todos os assuntos e criar notas de auditoria  
 - **Editor**: Pode criar novos assuntos e visualizar o sistema
+- **Cadastro Usuário**: Pode visualizar e gerenciar sua própria chefia. Acesso restrito a funções de cadastro.
 
 ## Requisitos
 - PHP 7.4 ou superior

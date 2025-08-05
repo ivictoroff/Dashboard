@@ -11,11 +11,11 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit();
 }
 
-// Verificar se o usuário tem permissão (apenas Suporte Técnico)
+// Verificar se o usuário tem permissão (Suporte Técnico ou Cadastro de Usuário)
 $perfilId = $_SESSION['perfil_id'] ?? 2;
-if ($perfilId !== 1) { // 1=Suporte Técnico
+if ($perfilId !== 1 && $perfilId !== 5) { // 1=Suporte Técnico, 5=Cadastro de Usuário
     http_response_code(403);
-    echo json_encode(['error' => 'Permissão negada. Apenas Suporte Técnico pode gerenciar divisões.']);
+    echo json_encode(['error' => 'Permissão negada. Apenas Suporte Técnico e Cadastro de Usuário podem gerenciar divisões.']);
     exit();
 }
 
@@ -27,6 +27,17 @@ if (!$data || !isset($data['nome']) || trim($data['nome']) === '' || !isset($dat
 }
 $nome = trim($data['nome']);
 $chefia_id = intval($data['chefia_id']);
+
+// Validações específicas para perfil 5 (Cadastro de Usuário)
+if ($perfilId === 5) {
+    // Só pode criar divisões na sua própria chefia
+    $chefiaUsuarioLogado = $_SESSION['chefia_id'] ?? null;
+    if ($chefia_id !== $chefiaUsuarioLogado) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Você só pode criar divisões na sua própria chefia.']);
+        exit;
+    }
+}
 
 // Verifica se já existe
 $stmt = $conn->prepare('SELECT id FROM divisao WHERE nome = ? AND chefia_id = ?');

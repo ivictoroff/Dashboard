@@ -124,7 +124,7 @@ session_start();
                     </p>
                     <div class="mt-3">
                         <a 
-                            href="Manual do Usuário do Painel Administrativo.pdf" 
+                            href="Manual_do_Usuário_do_Painel_Administrativo.pdf" 
                             target="_blank"
                             class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 hover:underline transition-colors"
                         >

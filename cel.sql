@@ -111,7 +111,7 @@ INSERT INTO `divisao` (`id`, `nome`, `chefia_id`) VALUES
 CREATE TABLE `historico` (
   `id` int(11) NOT NULL,
   `assunto_id` int(11) NOT NULL,
-  `data` date NOT NULL,
+  `data` datetime NOT NULL,
   `usuario` int(11) DEFAULT NULL,
   `acao` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

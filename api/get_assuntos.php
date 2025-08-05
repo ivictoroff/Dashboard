@@ -29,6 +29,8 @@ try {
             a.estado,
             a.dataAtualizacao,
             u.idt_Mil AS criadoPor,
+            u.pg AS criadoPorPg,
+            u.nome AS criadoPorNome,
             ch.nome AS chefia,
             d.nome AS divisao,
 
@@ -38,18 +40,24 @@ try {
             ac.estado AS acao_estado,
             ac.responsavel,
             ac.dataAtualizacao AS acao_dataAtualizacao,
+            ur.pg AS responsavel_pg,
+            ur.nome AS responsavel_nome,
 
             h.id AS historico_id,
             h.data AS historico_data,
             h.usuario AS historico_usuario,
-            h.acao AS historico_acao
+            h.acao AS historico_acao,
+            uh.pg AS historico_usuario_pg,
+            uh.nome AS historico_usuario_nome
 
         FROM assuntos a
         INNER JOIN usuarios u ON u.id = a.criadoPor
         INNER JOIN chefia ch ON ch.id = u.chefia_id
         INNER JOIN divisao d ON d.id = u.divisao_id
         LEFT JOIN acoes ac ON ac.assunto_id = a.id
+        LEFT JOIN usuarios ur ON ur.id = ac.responsavel
         LEFT JOIN historico h ON h.assunto_id = a.id
+        LEFT JOIN usuarios uh ON uh.id = h.usuario
         WHERE a.ativo = 1
     ";
 
@@ -136,6 +144,8 @@ try {
                 'estado' => $row['estado'],
                 'dataAtualizacao' => $row['dataAtualizacao'],
                 'criadoPor' => $row['criadoPor'],
+                'criadoPorPg' => $row['criadoPorPg'],
+                'criadoPorNome' => $row['criadoPorNome'],
                 'acoes' => [],
                 'historico' => []
             ];
@@ -148,6 +158,8 @@ try {
                 'providencia' => $row['providencia'],
                 'estado' => $row['acao_estado'],
                 'responsavel' => $row['responsavel'],
+                'responsavelPg' => $row['responsavel_pg'],
+                'responsavelNome' => $row['responsavel_nome'],
                 'dataAtualizacao' => $row['acao_dataAtualizacao']
             ];
         }
@@ -157,6 +169,8 @@ try {
                 'id' => $row['historico_id'],
                 'data' => $row['historico_data'],
                 'usuario' => $row['historico_usuario'],
+                'usuarioPg' => $row['historico_usuario_pg'],
+                'usuarioNome' => $row['historico_usuario_nome'],
                 'acao' => $row['historico_acao']
             ];
         }

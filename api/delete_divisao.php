@@ -7,11 +7,11 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit();
 }
 
-// Verificar se o usuário tem permissão (apenas Suporte Técnico)
+// Verificar se o usuário tem permissão (Suporte Técnico ou Cadastro de Usuário)
 $perfilId = $_SESSION['perfil_id'] ?? 2;
-if ($perfilId !== 1) { // 1=Suporte Técnico
+if ($perfilId !== 1 && $perfilId !== 5) { // 1=Suporte Técnico, 5=Cadastro de Usuário
     http_response_code(403);
-    echo json_encode(['error' => 'Permissão negada. Apenas Suporte Técnico pode gerenciar divisões.']);
+    echo json_encode(['error' => 'Permissão negada. Apenas Suporte Técnico e Cadastro de Usuário podem gerenciar divisões.']);
     exit();
 }
 
@@ -37,8 +37,8 @@ if (!$data || !isset($data['id'])) {
 $id = $data['id'];
 
 try {
-    // Verificar se a divisão existe
-    $stmt = $conn->prepare("SELECT id, nome FROM divisao WHERE id = ?");
+    // Verificar se a divisão existe e pegar dados para validação
+    $stmt = $conn->prepare("SELECT id, nome, chefia_id FROM divisao WHERE id = ?");
     $stmt->bind_param('i', $id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -48,7 +48,20 @@ try {
         echo json_encode(['error' => 'Divisão não encontrada']);
         exit();
     }
+    
+    $divisao = $result->fetch_assoc();
     $stmt->close();
+    
+    // Validações específicas para perfil 5 (Cadastro de Usuário)
+    if ($perfilId === 5) {
+        // Só pode excluir divisões da sua própria chefia
+        $chefiaUsuarioLogado = $_SESSION['chefia_id'] ?? null;
+        if ($divisao['chefia_id'] !== $chefiaUsuarioLogado) {
+            http_response_code(403);
+            echo json_encode(['error' => 'Você só pode excluir divisões da sua própria chefia.']);
+            exit;
+        }
+    }
     
     // Verificar se existem usuários vinculados a esta divisão
     $stmt = $conn->prepare("SELECT COUNT(*) as count FROM usuarios WHERE divisao_id = (SELECT id FROM divisao WHERE id = ?)");

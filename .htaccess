@@ -47,6 +47,11 @@ Header always set Referrer-Policy "strict-origin-when-cross-origin"
     Deny from all
 </Files>
 
+# Redirecionar para HTTP (forçar HTTP ao invés de HTTPS)
+RewriteEngine On
+RewriteCond %{HTTPS} on
+RewriteRule ^(.*)$ http://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
 # Redirecionar para HTTPS (descomente em produção com SSL)
 # RewriteEngine On
 # RewriteCond %{HTTPS} off

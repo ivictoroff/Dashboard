@@ -459,7 +459,7 @@ if (isset($_SESSION['divisao_id'])) {
                                             Chefia
                                         </th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Divisão
+                                            Militar Responsável
                                         </th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Assunto
@@ -880,6 +880,21 @@ if (isset($_SESSION['divisao_id'])) {
                 </div>
 
                 <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Perfil</label>
+                    <input type="text" id="contaPerfil" disabled class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Chefia</label>
+                    <input type="text" id="contaChefia" disabled class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Divisão</label>
+                    <input type="text" id="contaDivisao" disabled class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600">
+                </div>
+
+                <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Nova Senha</label>
                     <input type="password" id="contaSenha" name="senha" placeholder="Deixe em branco para manter a senha atual" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
@@ -1095,7 +1110,7 @@ if (isset($_SESSION['divisao_id'])) {
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Data
+                            Data/Hora
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Usuário
@@ -1155,6 +1170,7 @@ if (isset($_SESSION['divisao_id'])) {
         // Variáveis globais
         let currentFilter = 'pendentes';
         let currentUser = {
+            id: <?php echo isset($_SESSION['usuario_id']) ? (int)$_SESSION['usuario_id'] : 'null'; ?>,
             nome: "<?php echo addslashes($usuarioNome); ?>",
             pg: "<?php echo addslashes($_SESSION['pg'] ?? ''); echo " -"; ?>",
             divisao: "<?php echo addslashes($usuarioDivisao); ?>",
@@ -1808,9 +1824,14 @@ if (isset($_SESSION['divisao_id'])) {
                 const acoesResumo = assunto.acoes.map(a => a.acao).join('; ').substring(0, 100) + (assunto.acoes.map(a => a.acao).join('; ').length > 100 ? '...' : '');
                 const providenciasResumo = assunto.acoes.map(a => a.providencia).filter(p => p).join('; ').substring(0, 100) + (assunto.acoes.map(a => a.providencia).filter(p => p).join('; ').length > 100 ? '...' : '');
                 
+                // Formatação do militar responsável: P/Grad Nome
+                const militarResponsavel = assunto.criadoPorPg && assunto.criadoPorNome 
+                    ? `${assunto.criadoPorPg} ${assunto.criadoPorNome}` 
+                    : assunto.criadoPor || '-';
+                
                 row.innerHTML = `
                     <td class="px-6 py-4 text-sm text-gray-900 break-words max-w-xs">${assunto.chefia}</td>
-                    <td class="px-6 py-4 text-sm text-gray-900 break-words max-w-xs">${assunto.divisao}</td>
+                    <td class="px-6 py-4 text-sm text-gray-900 break-words max-w-xs">${militarResponsavel}</td>
                     <td class="px-6 py-4 text-sm text-gray-900 break-words max-w-sm">${assunto.assunto}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                         <span class="px-2 py-1 text-xs font-medium rounded-full ${assunto.critico === 'sim' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}">
@@ -1951,16 +1972,12 @@ if (isset($_SESSION['divisao_id'])) {
         }
 
         function updateUsuarioSelects() {
-            console.log('updateUsuarioSelects chamada, chefias disponíveis:', chefias.length);
-            console.log('currentUser.perfil:', currentUser.perfil, 'currentUser.chefia_id:', currentUser.chefia_id);
-            
             // Atualizar select de chefias
             const chefiaSelect = document.getElementById('usuarioChefiaSelect');
             chefiaSelect.innerHTML = '<option value="">Selecione uma chefia</option>';
             
             // Verificar se as chefias foram carregadas
             if (!chefias || chefias.length === 0) {
-                console.log('Nenhuma chefia disponível');
                 chefiaSelect.innerHTML = '<option value="">Aguarde... carregando chefias</option>';
                 return;
             }
@@ -1969,21 +1986,17 @@ if (isset($_SESSION['divisao_id'])) {
             let chefiasParaExibir = chefias;
             if (currentUser.perfil === 5 && currentUser.chefia_id !== null && currentUser.chefia_id !== undefined) {
                 chefiasParaExibir = chefias.filter(chefia => chefia.id == currentUser.chefia_id); // Usar == em vez de === por causa dos tipos
-                console.log('Filtrado para perfil 5, chefia_id:', currentUser.chefia_id, 'chefias para exibir:', chefiasParaExibir.length);
                 
                 // Se o filtro não encontrou nenhuma chefia, mostrar todas como fallback
                 if (chefiasParaExibir.length === 0) {
-                    console.log('AVISO: Filtro por chefia_id não encontrou resultados. Mostrando todas as chefias como fallback.');
+                    console.warn('Filtro por chefia_id não encontrou resultados. Mostrando todas as chefias como fallback.');
                     chefiasParaExibir = chefias;
                 }
             } else if (currentUser.perfil === 5) {
-                console.log('ATENÇÃO: Perfil 5 mas chefia_id é null/undefined. Mostrando todas as chefias.');
+                console.warn('Perfil 5 mas chefia_id é null/undefined. Mostrando todas as chefias.');
             }
             
-            console.log('Chefias finais para exibir:', chefiasParaExibir.length);
-            
             if (chefiasParaExibir.length === 0) {
-                console.log('PROBLEMA: Nenhuma chefia será exibida após filtros!');
                 if (currentUser.perfil === 5) {
                     chefiaSelect.innerHTML = '<option value="">Sua chefia não foi encontrada. Contate o administrador.</option>';
                 } else {
@@ -1997,7 +2010,6 @@ if (isset($_SESSION['divisao_id'])) {
                 option.value = chefia.id;
                 option.textContent = chefia.nome;
                 chefiaSelect.appendChild(option);
-                console.log('Adicionada chefia:', chefia.nome, 'ID:', chefia.id);
             });
             
             // Remover listeners anteriores e adicionar novo evento de mudança para filtrar divisões
@@ -2045,21 +2057,15 @@ if (isset($_SESSION['divisao_id'])) {
         }
 
         async function openUsuarioModal(isEdit = false) {
-            console.log('openUsuarioModal chamada, isEdit:', isEdit);
             // Garantir que chefias e divisões estejam carregadas
             if (chefias.length === 0) {
-                console.log('Carregando chefias...');
                 await fetchChefias();
             }
             if (divisoes.length === 0) {
-                console.log('Carregando divisões...');
                 await fetchDivisoes();
             }
             
-            console.log('Chefias disponíveis:', chefias.length, 'Divisões disponíveis:', divisoes.length);
-            console.log('Dados do currentUser antes de updateUsuarioSelects:', currentUser);
             updateUsuarioSelects();
-            console.log('updateUsuarioSelects concluída, abrindo modal...');
             document.getElementById('usuarioModal').style.display = 'block';
             
             const senhaField = document.querySelector('#usuarioForm input[name="senha"]');
@@ -2106,8 +2112,6 @@ if (isset($_SESSION['divisao_id'])) {
                     // Prevenir mudanças mas permitir que o valor seja enviado
                     chefiaSelect.addEventListener('mousedown', (e) => e.preventDefault());
                     chefiaSelect.addEventListener('keydown', (e) => e.preventDefault());
-                    
-                    console.log('Perfil 5: chefia selecionada para:', currentUser.chefia_id, 'valor atual:', chefiaSelect.value);
                     
                     // Disparar evento change para atualizar divisões
                     chefiaSelect.dispatchEvent(new Event('change'));
@@ -2295,6 +2299,9 @@ if (isset($_SESSION['divisao_id'])) {
                     document.getElementById('contaIdtMil').value = userData.user.idt_Mil || '';
                     document.getElementById('contaPg').value = userData.user.pg || '';
                     document.getElementById('contaNome').value = userData.user.nome || '';
+                    document.getElementById('contaPerfil').value = userData.user.perfil_nome || 'Não definido';
+                    document.getElementById('contaChefia').value = userData.user.chefia_nome || 'Não definido';
+                    document.getElementById('contaDivisao').value = userData.user.divisao_nome || 'Não definido';
                 } else {
                     alert('Erro ao carregar dados do usuário: ' + userData.message);
                 }
@@ -2519,13 +2526,14 @@ if (isset($_SESSION['divisao_id'])) {
             // Para perfil 5 (Cadastro de Usuário), só mostrar sua própria chefia
             let chefiasParaExibir = chefias;
             if (currentUser.perfil === 5) {
-                chefiasParaExibir = chefias.filter(chefia => chefia.id === currentUser.chefia_id);
+                // Usar comparação flexível para lidar com tipos diferentes
+                chefiasParaExibir = chefias.filter(chefia => chefia.id == currentUser.chefia_id);
             }
             
             chefiasParaExibir.forEach(chefia => {
                 const option = document.createElement('option');
-                option.value = chefia.id; // Usa o ID da chefia
-                option.textContent = chefia.nome || chefia.chefia; // Usa o nome da chefia
+                option.value = chefia.id;
+                option.textContent = chefia.nome || chefia.chefia;
                 select.appendChild(option);
             });
         }
@@ -2556,15 +2564,29 @@ if (isset($_SESSION['divisao_id'])) {
                 editingDivisao = null;
             }
             
-            // Para perfil 5 (Cadastro de Usuário), pré-selecionar e desabilitar a chefia
+            // Para perfil 5 (Cadastro de Usuário), pré-selecionar a chefia e torná-la visualmente não editável
             if (currentUser.perfil === 5) {
-                const chefiaSelect = document.getElementById('divisaoChefiaSelect');
-                chefiaSelect.value = currentUser.chefia_id;
-                chefiaSelect.disabled = true;
+                // Aguardar um pequeno delay para garantir que o select foi populado
+                setTimeout(() => {
+                    const chefiaSelect = document.getElementById('divisaoChefiaSelect');
+                    chefiaSelect.value = currentUser.chefia_id;
+                    
+                    // Em vez de disabled, fazer readonly visualmente mas funcional
+                    chefiaSelect.style.backgroundColor = '#f3f4f6';
+                    chefiaSelect.style.cursor = 'not-allowed';
+                    // Prevenir mudanças mas permitir que o valor seja enviado
+                    chefiaSelect.addEventListener('mousedown', (e) => e.preventDefault());
+                    chefiaSelect.addEventListener('keydown', (e) => e.preventDefault());
+                }, 100);
             } else {
                 // Reabilitar o select para outros perfis
                 const chefiaSelect = document.getElementById('divisaoChefiaSelect');
                 chefiaSelect.disabled = false;
+                chefiaSelect.style.backgroundColor = '';
+                chefiaSelect.style.cursor = '';
+                // Remover listeners de prevenção se existirem
+                chefiaSelect.removeEventListener('mousedown', (e) => e.preventDefault());
+                chefiaSelect.removeEventListener('keydown', (e) => e.preventDefault());
             }
         }
 
@@ -2572,6 +2594,16 @@ if (isset($_SESSION['divisao_id'])) {
             document.getElementById('divisaoModal').style.display = 'none';
             document.getElementById('divisaoForm').reset();
             editingDivisao = null;
+            
+            // Resetar estilo do select de chefia
+            const chefiaSelect = document.getElementById('divisaoChefiaSelect');
+            chefiaSelect.disabled = false;
+            chefiaSelect.style.backgroundColor = '';
+            chefiaSelect.style.cursor = '';
+            // Remover listeners de prevenção se existirem
+            const preventHandler = (e) => e.preventDefault();
+            chefiaSelect.removeEventListener('mousedown', preventHandler);
+            chefiaSelect.removeEventListener('keydown', preventHandler);
         }
 
         async function editDivisao(divisaoId) {
@@ -2641,12 +2673,6 @@ if (isset($_SESSION['divisao_id'])) {
             (async () => {
                 const formData = new FormData(this);
                 
-                // Debug: Ver todos os dados do formulário
-                console.log('FormData original:');
-                for (let [key, value] of formData.entries()) {
-                    console.log(`${key}: "${value}"`);
-                }
-                
                 const usuarioData = {
                     id: formData.get('id'),
                     idt_Mil: formData.get('idt_Mil'),
@@ -2661,11 +2687,8 @@ if (isset($_SESSION['divisao_id'])) {
                 if (currentUser.perfil === 5) {
                     if (!usuarioData.chefia_id) {
                         usuarioData.chefia_id = currentUser.chefia_id;
-                        console.log('Perfil 5: Corrigindo chefia_id para:', currentUser.chefia_id);
                     }
                 }
-                
-                console.log('usuarioData após mapeamento:', usuarioData);
                 
                 // Verificação adicional dos campos obrigatórios
                 if (!usuarioData.chefia_id) {
@@ -2686,8 +2709,6 @@ if (isset($_SESSION['divisao_id'])) {
                 if (!editingUsuario || (senha && senha.trim() !== '')) {
                     usuarioData.senha = senha;
                 }
-                
-                console.log('Dados do usuário sendo enviados:', usuarioData);
                 
                 try {
                     const url = editingUsuario ? 'api/edit_usuario.php' : 'api/add_usuario.php';
@@ -2806,6 +2827,17 @@ if (isset($_SESSION['divisao_id'])) {
                 chefia_id: formData.get('chefia_id')
             };
             
+            // Para perfil 5, se o campo chefia_id estiver vazio devido ao disabled, usar o valor correto
+            if (currentUser.perfil === 5 && !divisaoData.chefia_id) {
+                divisaoData.chefia_id = currentUser.chefia_id;
+            }
+            
+            // Verificação adicional do campo obrigatório
+            if (!divisaoData.chefia_id) {
+                alert('Por favor, selecione uma chefia.');
+                return;
+            }
+            
             // Se estiver editando, inclui o ID
             if (editingDivisao) {
                 divisaoData.id = editingDivisao.id;
@@ -2813,6 +2845,7 @@ if (isset($_SESSION['divisao_id'])) {
             
             try {
                 const url = editingDivisao ? 'api/edit_divisao.php' : 'api/add_divisao.php';
+                
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: {
@@ -2826,11 +2859,12 @@ if (isset($_SESSION['divisao_id'])) {
                 if (response.ok) {
                     await fetchDivisoes(); // Recarrega as divisões do servidor
                     closeDivisaoModal();
+                    alert(editingDivisao ? 'Divisão atualizada com sucesso!' : 'Divisão adicionada com sucesso!');
                 } else {
                     alert('Erro ao salvar divisão: ' + (data.error || 'Erro desconhecido'));
                 }
             } catch (err) {
-                console.error('Erro:', err);
+                console.error('Erro na requisição:', err);
                 alert('Erro ao conectar com o servidor');
             }
         });
@@ -2939,8 +2973,10 @@ function detalharAssunto(assuntoId) {
             <h4 class="text-lg font-semibold mb-4">Ações e Providências</h4>
             <div class="space-y-4">
                 ${assuntoAtual.acoes.map(acao => {
-                    const usuario = usuarios.find(u => u.id === acao.responsavel);
-                    const nomeUsuario = usuario ? `${usuario.pg} ${usuario.nome}` : 'Usuário não encontrado';
+                    // Usar os dados do usuário responsável que já vêm da API
+                    const nomeUsuario = acao.responsavelPg && acao.responsavelNome 
+                        ? `${acao.responsavelPg} ${acao.responsavelNome}` 
+                        : (acao.responsavel || 'Responsável não definido');
                     
                     return `
                         <div class="action-row">
@@ -3246,14 +3282,16 @@ function mostrarHistorico() {
     tbody.innerHTML = '';
     
     assuntoAtual.historico.forEach(item => {
-        const usuario = usuarios.find(u => u.id === item.usuario);
-        const nomeUsuario = usuario ? `${usuario.pg} ${usuario.nome}` : 'Usuário não encontrado';
+        // Usar os dados do usuário que já vêm da API
+        const nomeUsuario = item.usuarioPg && item.usuarioNome 
+            ? `${item.usuarioPg} ${item.usuarioNome}` 
+            : (item.usuario || 'Usuário não encontrado');
         
         const row = document.createElement('tr');
         row.className = 'hover:bg-gray-50';
         
         row.innerHTML = `
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatDate(item.data)}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatDateTime(item.data)}</td>
             <td class="px-6 py-4 text-sm text-gray-900 break-words max-w-xs">${nomeUsuario}</td>
             <td class="px-6 py-4 text-sm text-gray-900 break-words">${item.acao}</td>
         `;
@@ -3380,15 +3418,24 @@ function salvarAcao(acaoId) {
     
     if (typeof acaoIdNumerico === 'number' && !isNaN(acaoIdNumerico) && assuntoAtual.acoes[acaoIdNumerico]) {
         console.log('FLUXO: Atualizando ação existente no índice:', acaoIdNumerico);
-        // Ação existente - atualizar mantendo a posição original
-        assuntoAtual.acoes[acaoIdNumerico] = { ...assuntoAtual.acoes[acaoIdNumerico], ...acaoData };
+        // Ação existente - atualizar mantendo a posição original e preservando o responsável
+        const acaoExistente = assuntoAtual.acoes[acaoIdNumerico];
+        assuntoAtual.acoes[acaoIdNumerico] = { 
+            ...acaoExistente, 
+            ...acaoData,
+            // Preservar campos importantes da ação original
+            id: acaoExistente.id,
+            responsavel: acaoExistente.responsavel,
+            responsavelPg: acaoExistente.responsavelPg,
+            responsavelNome: acaoExistente.responsavelNome
+        };
         console.log('Ação atualizada:', assuntoAtual.acoes[acaoIdNumerico]);
         acaoId = acaoIdNumerico; // Usar o ID numérico para o resto da função
     } else if (typeof acaoId === 'string' && acaoId.startsWith('nova_')) {
         console.log('FLUXO: Criando nova ação com ID string:', acaoId);
         // Nova ação - adicionar ao array
         const novaAcao = {
-            responsavel: '1',
+            responsavel: currentUser.id || '1', // Usar o ID do usuário atual para novas ações
             dataAtualizacao: new Date().toISOString().split('T')[0],
             ...acaoData
         };
@@ -3476,9 +3523,10 @@ function salvarAcao(acaoId) {
                     estado: acao.estado || 'pendente'
                 };
                 
-                // Inclui ID se a ação já existe no banco
+                // Inclui ID e responsável se a ação já existe no banco
                 if (acao.id && Number(acao.id) > 0) {
                     acaoObj.id = Number(acao.id);
+                    // Para ações existentes, não enviar o campo responsavel - será preservado pela API
                 }
                 
                 assuntoData.acoes.push(acaoObj);

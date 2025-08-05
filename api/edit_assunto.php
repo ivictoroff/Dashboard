@@ -131,7 +131,7 @@ try {
 
     // Busca ações atuais para comparação histórica
     $acoesAtuais = [];
-    $stmtAcoesAtuais = $conn->prepare("SELECT id, acao, providencia, estado FROM acoes WHERE assunto_id = ?");
+    $stmtAcoesAtuais = $conn->prepare("SELECT id, acao, providencia, estado, responsavel FROM acoes WHERE assunto_id = ?");
     $stmtAcoesAtuais->bind_param("i", $id);
     $stmtAcoesAtuais->execute();
     $resultAcoes = $stmtAcoesAtuais->get_result();
@@ -147,7 +147,9 @@ try {
         $acaoTxt = trim($acao['acao'] ?? '');
         $providencia = trim($acao['providencia'] ?? '');
         $estadoAcao = $acao['estado'] ?? 'pendente';
-        $responsavel = $acao['responsavel'] ?? $usuarioId;
+        
+        // Para ações existentes, manter o responsável original. Para novas ações, usar o usuário atual
+        $responsavel = $acaoId && isset($acoesAtuais[$acaoId]) ? $acoesAtuais[$acaoId]['responsavel'] : $usuarioId;
 
         // Pula ações vazias
         if (empty($acaoTxt)) {

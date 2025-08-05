@@ -15,11 +15,17 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 try {
     $usuarioId = $_SESSION['usuario_id'];
     
-    // Buscar dados básicos do usuário
+    // Buscar dados completos do usuário incluindo perfil, chefia e divisão
     $stmt = $conn->prepare("
-        SELECT id, idt_Mil, pg, nome
-        FROM usuarios 
-        WHERE id = ?
+        SELECT u.id, u.idt_Mil, u.pg, u.nome, u.perfil_id, 
+               p.nome AS perfil_nome,
+               c.nome AS chefia_nome,
+               d.nome AS divisao_nome
+        FROM usuarios u
+        LEFT JOIN perfis p ON p.id = u.perfil_id
+        LEFT JOIN chefia c ON c.id = u.chefia_id
+        LEFT JOIN divisao d ON d.id = u.divisao_id
+        WHERE u.id = ?
     ");
     
     $stmt->bind_param('i', $usuarioId);
