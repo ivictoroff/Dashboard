@@ -5,8 +5,9 @@ require_once '../db.php';
 try {
     $chefia_id = $_GET['chefia_id'] ?? null;
     $divisao_id = $_GET['divisao_id'] ?? null;
+    $incluir_inativos = $_GET['incluir_inativos'] ?? false;
 
-    $sql = "SELECT u.id, u.idt_Mil, u.pg, u.nome, ch.nome AS chefia, d.nome AS divisao, u.chefia_id, u.divisao_id, u.perfil_id, p.nome AS perfil
+    $sql = "SELECT u.id, u.idt_Mil, u.pg, u.nome, ch.nome AS chefia, d.nome AS divisao, u.chefia_id, u.divisao_id, u.perfil_id, p.nome AS perfil, u.ativo
             FROM usuarios u
             JOIN chefia ch ON ch.id = u.chefia_id
             JOIN divisao d ON d.id = u.divisao_id
@@ -15,6 +16,11 @@ try {
 
     $params = [];
     $types = "";
+
+    // Por padrão, mostrar apenas usuários ativos, a menos que seja especificado incluir inativos
+    if (!$incluir_inativos) {
+        $sql .= " AND u.ativo = 1";
+    }
 
     if ($chefia_id) {
         $sql .= " AND u.chefia_id = ?";

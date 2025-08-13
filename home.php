@@ -75,13 +75,15 @@ if (isset($_SESSION['divisao_id'])) {
                 width: 95%;
                 margin: 2% auto;
                 max-height: 95vh;
-                padding: 15px;
+                padding: 10px;
+                border-radius: 4px;
             }
             
             .modal-large {
                 width: 98%;
                 margin: 1% auto;
                 height: 98vh;
+                padding: 10px;
             }
         }
         .modal-actions {
@@ -129,6 +131,7 @@ if (isset($_SESSION['divisao_id'])) {
                 z-index: 50;
                 transition: left 0.3s ease;
                 width: 280px;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
             }
             
             .sidebar.open {
@@ -155,28 +158,39 @@ if (isset($_SESSION['divisao_id'])) {
             }
             
             .mobile-header {
-                padding-left: 60px;
+                padding-left: 8px;
+                padding-right: 8px;
             }
             
             /* Estilos específicos para tabelas em mobile */
             table {
-                font-size: 0.75rem;
+                font-size: 0.7rem;
+                min-width: 100%;
             }
             
             table th,
             table td {
-                padding: 0.375rem 0.25rem !important;
+                padding: 0.25rem 0.125rem !important;
                 white-space: nowrap;
-                min-width: 60px;
+                min-width: 50px;
+                font-size: 0.6rem;
             }
             
             /* Botões de ação em mobile */
             .btn-mobile {
                 padding: 0.25rem 0.5rem;
                 font-size: 0.625rem;
+                border-radius: 4px;
+            }
+            
+            /* Melhorar overflow das tabelas */
+            .table-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                max-width: 100vw;
             }
         }
-        
+    
         @media (max-width: 640px) {
             .grid-responsive {
                 grid-template-columns: 1fr;
@@ -185,32 +199,211 @@ if (isset($_SESSION['divisao_id'])) {
             .flex-responsive {
                 flex-direction: column;
                 align-items: stretch;
+                gap: 0.5rem;
             }
             
             .text-responsive {
-                font-size: 1rem;
+                font-size: 0.9rem;
             }
             
             .text-responsive-sm {
-                font-size: 0.875rem;
+                font-size: 0.8rem;
             }
             
             /* Estilos específicos para o resumo em mobile */
             .resumo-mobile {
-                padding: 1rem 0.5rem;
+                padding: 0.75rem 0.5rem;
             }
             
             .resumo-mobile .grid {
                 grid-template-columns: 1fr;
-                gap: 1rem;
+                gap: 0.75rem;
             }
             
             .resumo-mobile h3 {
-                font-size: 1.1rem;
+                font-size: 1rem;
             }
             
             .resumo-mobile h4 {
-                font-size: 0.9rem;
+                font-size: 0.85rem;
+            }
+            
+            /* Melhorar botões em mobile */
+            .filter-buttons {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.25rem;
+            }
+            
+            .filter-buttons button {
+                flex: 1;
+                min-width: auto;
+                font-size: 0.7rem;
+                padding: 0.375rem 0.5rem;
+            }
+            
+            /* Header responsivo */
+            .mobile-header h2 {
+                font-size: 1rem;
+                line-height: 1.2;
+            }
+            
+            .mobile-header p {
+                font-size: 0.75rem;
+            }
+            
+            /* Inputs mais compactos */
+            input[type="date"],
+            input[type="text"] {
+                font-size: 0.8rem;
+                padding: 0.25rem 0.5rem;
+            }
+        }
+        
+        /* Melhorias adicionais para muito pequenas telas */
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 100vw;
+            }
+            
+            .mobile-header {
+                padding: 0.5rem;
+                padding-left: 8px;
+            }
+            
+            .main-content {
+                padding: 0;
+            }
+            
+            .flex-1.p-4.md\\:p-6.overflow-y-auto {
+                padding: 0.5rem !important;
+            }
+            
+            table th,
+            table td {
+                padding: 0.125rem !important;
+                font-size: 0.55rem;
+            }
+            
+            .chart-container {
+                height: 200px;
+            }
+            
+            /* Botões muito pequenos para telas tiny */
+            .filter-buttons button {
+                font-size: 0.65rem;
+                padding: 0.25rem 0.375rem;
+            }
+            
+            /* Cards do resumo mais compactos */
+            .bg-blue-50.p-6.rounded-lg,
+            .bg-yellow-50.p-6.rounded-lg {
+                padding: 0.75rem !important;
+            }
+            
+            .bg-white.p-4.rounded-lg.shadow-sm {
+                padding: 0.5rem !important;
+            }
+        }
+        
+        /* Utilitários responsivos adicionais */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .text-truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .flex-wrap-mobile {
+            flex-wrap: wrap;
+        }
+        
+        @media (max-width: 768px) {
+            .flex-wrap-mobile {
+                flex-direction: column;
+            }
+            
+            .w-full-mobile {
+                width: 100% !important;
+            }
+        }
+        
+        /* Scroll suave para mobile */
+        * {
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Melhorar o toque em mobile */
+        button, a, input, select, textarea {
+            touch-action: manipulation;
+        }
+
+        /* Classes para esconder colunas em mobile */
+        @media (max-width: 768px) {
+            .hide-mobile {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hide-mobile-sm {
+                display: none !important;
+            }
+        }
+        
+        /* Controle de tamanho da coluna assunto */
+        .assunto-column {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        @media (max-width: 768px) {
+            .assunto-column {
+                max-width: 120px;
+                min-width: 100px;
+                white-space: nowrap;
+            }
+        }
+        
+        /* Estilo para o botão de menu mobile */
+        #menuBtn {
+            transition: all 0.2s ease;
+            min-width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Garantir que o botão só apareça no mobile */
+        @media (min-width: 768px) {
+            #menuBtn {
+                display: none !important;
+            }
+        }
+        
+        #menuBtn:hover {
+            transform: scale(1.02);
+            background-color: rgb(219 234 254);
+            border-color: rgb(147 197 253);
+        }
+        
+        #menuBtn:active {
+            transform: scale(0.98);
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                padding-top: 0;
+            }
+            
+            .mobile-header {
+                padding-left: 8px !important;
+                padding-right: 8px !important;
             }
         }
     </style>
@@ -258,30 +451,30 @@ if (isset($_SESSION['divisao_id'])) {
         <!-- Main Content -->
         <div class="main-content flex-1 flex flex-col">
             <!-- Header -->
-            <header class="bg-white shadow-sm border-b p-4 flex justify-between items-center mobile-header">
+            <header class="bg-white shadow-sm border-b p-2 md:p-4 flex justify-between items-center mobile-header relative">
                 <!-- Menu Button for Mobile -->
-                <button id="menuBtn" class="md:hidden p-2 rounded-lg hover:bg-gray-100 absolute left-4" onclick="toggleSidebar()">
-                    <span class="text-gray-600">☰</span>
+                <button id="menuBtn" class="md:hidden p-2 rounded-lg hover:bg-blue-50 border border-blue-200 bg-blue-100 shadow-sm mr-3 z-10" onclick="toggleSidebar()">
+                    <span class="text-blue-700 text-lg font-bold">☰</span>
                 </button>
                 
-                <div>
-                    <h2 class="text-xl md:text-2xl font-bold text-gray-800 text-responsive" id="currentTabTitle">Resumo dos Assuntos</h2>
-                    <p class="text-gray-600 text-sm md:text-base" id="totalCount">0 registros encontrados</p>
+                <div class="flex-1 min-w-0">
+                    <h2 class="text-lg md:text-2xl font-bold text-gray-800 text-responsive truncate" id="currentTabTitle">Resumo dos Assuntos</h2>
+                    <p class="text-gray-600 text-xs md:text-base text-responsive-sm" id="totalCount">0 registros encontrados</p>
                 </div>
-                <div class="flex items-center space-x-2 md:space-x-4">
+                <div class="flex items-center space-x-1 md:space-x-4 ml-2">
                     <!-- User Info -->
-                    <div class="hidden sm:flex items-center space-x-2 px-3 py-1 bg-gray-100 rounded-lg">
-                        <span class="text-gray-700 font-medium text-sm" id="userInfo">Usuário - Divisão</span>
+                    <div class="hidden lg:flex items-center space-x-2 px-2 py-1 md:px-3 md:py-1 bg-gray-100 rounded-lg">
+                        <span class="text-gray-700 font-medium text-xs md:text-sm" id="userInfo">Usuário - Divisão</span>
                     </div>
                     <div class="relative">
-                        <button id="configBtn" class="p-2 rounded-lg hover:bg-gray-100">
-                            <span class="text-gray-600">⚙️</span>
+                        <button id="configBtn" class="p-1 md:p-2 rounded-lg hover:bg-gray-100">
+                            <span class="text-gray-600 text-sm md:text-base">⚙️</span>
                         </button>
-                        <div id="configMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border">
-                            <button onclick="openContaModal()" class="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-lg block">
+                        <div id="configMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border z-20">
+                            <button onclick="openContaModal()" class="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-lg block text-sm">
                                 Conta
                             </button>
-                            <a href="logout.php" id="logoffBtn" class="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-lg block">
+                            <a href="logout.php" id="logoffBtn" class="w-full text-left px-4 py-2 hover:bg-gray-100 rounded-lg block text-sm">
                                 Sair
                             </a>
                         </div>
@@ -290,50 +483,53 @@ if (isset($_SESSION['divisao_id'])) {
             </header>
 
             <!-- Content Area -->
-            <div class="flex-1 p-4 md:p-6 overflow-y-auto">
+            <div class="flex-1 p-2 md:p-6 overflow-y-auto"
+                 style="padding-left: 0.5rem; padding-right: 0.5rem;">
+                <div class="max-w-full"
+                     style="padding-left: 0.25rem; padding-right: 0.25rem;">
                 <!-- Resumo Tab -->
                 <div id="resumoTab" class="tab-content">
-                    <div class="bg-white rounded-lg shadow p-4 md:p-6 mb-6">
-                        <h3 class="text-lg font-semibold mb-6">Resumo dos Assuntos</h3>
+                    <div class="bg-white rounded-lg shadow p-3 md:p-6 mb-4 md:mb-6 resumo-mobile">
+                        <h3 class="text-base md:text-lg font-semibold mb-4 md:mb-6">Resumo dos Assuntos</h3>
                         
                         <!-- Totais Gerais -->
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8" style="display:none;">
-                            <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
-                                <h4 class="text-sm text-gray-600 mb-1">Total de Assuntos</h4>
-                                <p class="text-2xl font-bold text-blue-600" id="totalAssuntos">0</p>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-6 md:mb-8" style="display:none;">
+                            <div class="bg-blue-50 p-3 md:p-4 rounded-lg border-l-4 border-blue-500">
+                                <h4 class="text-xs md:text-sm text-gray-600 mb-1">Total de Assuntos</h4>
+                                <p class="text-lg md:text-2xl font-bold text-blue-600" id="totalAssuntos">0</p>
                             </div>
-                            <div class="bg-red-50 p-4 rounded-lg border-l-4 border-red-500">
-                                <h4 class="text-sm text-gray-600 mb-1">Total de Críticos</h4>
-                                <p class="text-2xl font-bold text-red-600" id="totalCriticos">0</p>
+                            <div class="bg-red-50 p-3 md:p-4 rounded-lg border-l-4 border-red-500">
+                                <h4 class="text-xs md:text-sm text-gray-600 mb-1">Total de Críticos</h4>
+                                <p class="text-lg md:text-2xl font-bold text-red-600" id="totalCriticos">0</p>
                             </div>
-                            <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
-                                <h4 class="text-sm text-gray-600 mb-1">Total de Ordinários</h4>
-                                <p class="text-2xl font-bold text-green-600" id="totalOrdinarios">0</p>
+                            <div class="bg-green-50 p-3 md:p-4 rounded-lg border-l-4 border-green-500">
+                                <h4 class="text-xs md:text-sm text-gray-600 mb-1">Total de Ordinários</h4>
+                                <p class="text-lg md:text-2xl font-bold text-green-600" id="totalOrdinarios">0</p>
                             </div>
                         </div>
 
                         <!-- Assuntos Pendentes e Concluídos -->
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
                             <!-- Assuntos Pendentes -->
-                            <div class="bg-yellow-50 p-6 rounded-lg border-l-4 border-yellow-500">
-                                <h4 class="text-lg font-semibold text-yellow-800 mb-4 flex items-center">
+                            <div class="bg-yellow-50 p-3 md:p-6 rounded-lg border-l-4 border-yellow-500">
+                                <h4 class="text-sm md:text-lg font-semibold text-yellow-800 mb-3 md:mb-4 flex items-center">
                                     <span class="mr-2">⏳</span>
                                     Assuntos Pendentes
                                 </h4>
-                                <div class="space-y-4">
-                                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                                <div class="space-y-3 md:space-y-4">
+                                    <div class="bg-white p-3 md:p-4 rounded-lg shadow-sm">
                                         <div class="flex justify-between items-center">
-                                            <span class="text-sm font-medium text-gray-700">Críticos</span>
-                                            <span class="text-xl font-bold text-red-600" id="pendentesCriticos">0</span>
+                                            <span class="text-xs md:text-sm font-medium text-gray-700">Críticos</span>
+                                            <span class="text-lg md:text-xl font-bold text-red-600" id="pendentesCriticos">0</span>
                                         </div>
                                         <div class="mt-2 bg-red-200 rounded-full h-2">
                                             <div class="bg-red-500 h-2 rounded-full transition-all duration-300" id="pendentesCriticosBar" style="width: 0%"></div>
                                         </div>
                                     </div>
-                                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                                    <div class="bg-white p-3 md:p-4 rounded-lg shadow-sm">
                                         <div class="flex justify-between items-center">
-                                            <span class="text-sm font-medium text-gray-700">Ordinários</span>
-                                            <span class="text-xl font-bold text-green-600" id="pendentesOrdinarios">0</span>
+                                            <span class="text-xs md:text-sm font-medium text-gray-700">Ordinários</span>
+                                            <span class="text-lg md:text-xl font-bold text-green-600" id="pendentesOrdinarios">0</span>
                                         </div>
                                         <div class="mt-2 bg-green-200 rounded-full h-2">
                                             <div class="bg-green-500 h-2 rounded-full transition-all duration-300" id="pendentesOrdinariosBar" style="width: 0%"></div>
@@ -341,33 +537,33 @@ if (isset($_SESSION['divisao_id'])) {
                                     </div>
                                     <div class="border-t pt-3">
                                         <div class="flex justify-between items-center">
-                                            <span class="text-lg font-semibold text-yellow-800">Total de Assuntos Pendentes</span>
-                                            <span class="text-2xl font-bold text-yellow-800" id="totalPendentes">0</span>
+                                            <span class="text-sm md:text-lg font-semibold text-yellow-800">Total Pendentes</span>
+                                            <span class="text-xl md:text-2xl font-bold text-yellow-800" id="totalPendentes">0</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Assuntos Concluídos -->
-                            <div class="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500">
-                                <h4 class="text-lg font-semibold text-blue-800 mb-4 flex items-center">
+                            <div class="bg-blue-50 p-3 md:p-6 rounded-lg border-l-4 border-blue-500">
+                                <h4 class="text-sm md:text-lg font-semibold text-blue-800 mb-3 md:mb-4 flex items-center">
                                     <span class="mr-2">✅</span>
                                     Assuntos Concluídos
                                 </h4>
-                                <div class="space-y-4">
-                                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                                <div class="space-y-3 md:space-y-4">
+                                    <div class="bg-white p-3 md:p-4 rounded-lg shadow-sm">
                                         <div class="flex justify-between items-center">
-                                            <span class="text-sm font-medium text-gray-700">Críticos</span>
-                                            <span class="text-xl font-bold text-red-600" id="concluidosCriticos">0</span>
+                                            <span class="text-xs md:text-sm font-medium text-gray-700">Críticos</span>
+                                            <span class="text-lg md:text-xl font-bold text-red-600" id="concluidosCriticos">0</span>
                                         </div>
                                         <div class="mt-2 bg-red-200 rounded-full h-2">
                                             <div class="bg-red-500 h-2 rounded-full transition-all duration-300" id="concluidosCriticosBar" style="width: 0%"></div>
                                         </div>
                                     </div>
-                                    <div class="bg-white p-4 rounded-lg shadow-sm">
+                                    <div class="bg-white p-3 md:p-4 rounded-lg shadow-sm">
                                         <div class="flex justify-between items-center">
-                                            <span class="text-sm font-medium text-gray-700">Ordinários</span>
-                                            <span class="text-xl font-bold text-green-600" id="concluidosOrdinarios">0</span>
+                                            <span class="text-xs md:text-sm font-medium text-gray-700">Ordinários</span>
+                                            <span class="text-lg md:text-xl font-bold text-green-600" id="concluidosOrdinarios">0</span>
                                         </div>
                                         <div class="mt-2 bg-green-200 rounded-full h-2">
                                             <div class="bg-green-500 h-2 rounded-full transition-all duration-300" id="concluidosOrdinariosBar" style="width: 0%"></div>
@@ -375,8 +571,8 @@ if (isset($_SESSION['divisao_id'])) {
                                     </div>
                                     <div class="border-t pt-3">
                                         <div class="flex justify-between items-center">
-                                            <span class="text-lg font-semibold text-green-800">Total de Assuntos Concluídos</span>
-                                            <span class="text-2xl font-bold text-green-800" id="totalConcluidos">0</span>
+                                            <span class="text-sm md:text-lg font-semibold text-green-800">Total Concluídos</span>
+                                            <span class="text-xl md:text-2xl font-bold text-green-800" id="totalConcluidos">0</span>
                                         </div>
                                     </div>
                                 </div>
@@ -385,8 +581,8 @@ if (isset($_SESSION['divisao_id'])) {
                     </div>
                     
                     <!-- Gráfico dos Assuntos -->
-                    <div class="bg-white rounded-lg shadow p-4 md:p-6">
-                        <h3 class="text-lg font-semibold mb-4">Distribuição dos Assuntos</h3>
+                    <div class="bg-white rounded-lg shadow p-3 md:p-6">
+                        <h3 class="text-base md:text-lg font-semibold mb-3 md:mb-4">Distribuição dos Assuntos</h3>
                         <!-- Gráfico de Barras -->
                         <div class="flex justify-center">
                             <div class="chart-container">
@@ -399,15 +595,15 @@ if (isset($_SESSION['divisao_id'])) {
                 <!-- Todos os assuntos Tab -->
                 <div id="todosTab" class="tab-content hidden">
                     <!-- Filtro por chefia -->
-                    <div id="chefiaFilterSection" class="bg-white rounded-lg shadow p-4 md:p-6 mb-6" style="display: none;">
-                        <div class="flex flex-col gap-4">
+                    <div id="chefiaFilterSection" class="bg-white rounded-lg shadow p-2 md:p-6 mb-4 md:mb-6" style="display: none;">
+                        <div class="flex flex-col gap-3 md:gap-4">
                             <!-- Primeira Linha - Filtros de chefia (apenas para Auditor COLOG - perfil 3) -->
-                            <div id="chefiaFilterContainer" class="flex flex-wrap gap-2" style="display: none;">
-                                <span class="text-xs md:text-sm text-gray-600 font-medium flex items-center mr-2">Filtrar por OM/Chefia:</span>
-                                <button id="chefiaFilterAll" class="px-3 py-2 text-xs md:px-4 md:py-2 md:text-sm rounded-lg border chefia-filter-active" onclick="filterByChefiaBtn('')">
-                                    Todas as OM/Chefias
+                            <div id="chefiaFilterContainer" class="flex flex-wrap gap-1 md:gap-2" style="display: none;">
+                                <span class="text-xs md:text-sm text-gray-600 font-medium flex items-center mr-1 md:mr-2 w-full sm:w-auto mb-1 sm:mb-0">Filtrar por OM/Chefia:</span>
+                                <button id="chefiaFilterAll" class="px-2 py-1 md:px-4 md:py-2 text-xs md:text-sm rounded-lg border chefia-filter-active flex-1 sm:flex-none" onclick="filterByChefiaBtn('')">
+                                    Todas
                                 </button>
-                                <div id="chefiaBtnContainer" class="flex flex-wrap gap-2">
+                                <div id="chefiaBtnContainer" class="flex flex-wrap gap-1 md:gap-2 flex-1">
                                     <!-- Botões de chefia serão inseridos aqui dinamicamente -->
                                 </div>
                             </div>
@@ -419,31 +615,31 @@ if (isset($_SESSION['divisao_id'])) {
                         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                             <div class="flex flex-wrap gap-2">
                                 <button class="px-3 py-2 text-xs md:px-4 md:py-2 md:text-sm rounded-lg border filter-active" onclick="filterAssuntos('pendentes')">
-                                    Assuntos pendentes
+                                    Assuntos Pendentes
                                 </button>
-                                <button class="px-3 py-2 text-xs md:px-4 md:py-2 md:text-sm rounded-lg border hover:bg-gray-50" onclick="filterAssuntos('todos')">
-                                    Todos os assuntos
+                                <button class="px-2 py-1 md:px-4 md:py-2 text-xs md:text-sm rounded-lg border hover:bg-gray-50 flex-1 sm:flex-none" onclick="filterAssuntos('todos')">
+                                    Todos os Assuntos
                                 </button>
-                                <button class="px-3 py-2 text-xs md:px-4 md:py-2 md:text-sm rounded-lg border hover:bg-gray-50" onclick="filterAssuntos('criticos')">
-                                    Assuntos críticos
+                                <button class="px-2 py-1 md:px-4 md:py-2 text-xs md:text-sm rounded-lg border hover:bg-gray-50 flex-1 sm:flex-none" onclick="filterAssuntos('criticos')">
+                                   Assuntos Críticos
                                 </button>
-                                <button class="px-3 py-2 text-xs md:px-4 md:py-2 md:text-sm rounded-lg border hover:bg-gray-50" onclick="filterAssuntos('concluidos')">
-                                    Assuntos concluídos
+                                <button class="px-2 py-1 md:px-4 md:py-2 text-xs md:text-sm rounded-lg border hover:bg-gray-50 flex-1 sm:flex-none" onclick="filterAssuntos('concluidos')">
+                                    Assuntos Concluídos
                                 </button>
                             </div>
                             <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
-                                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-                                    <div class="flex items-center gap-2">
-                                        <label class="text-xs md:text-sm text-gray-600 whitespace-nowrap">Prazo de:</label>
-                                        <input type="date" id="dataInicio" class="px-2 py-1 md:px-3 md:py-2 border rounded-lg text-xs md:text-sm w-full sm:w-auto">
+                                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
+                                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                                        <label class="text-xs md:text-sm text-gray-600 whitespace-nowrap">De:</label>
+                                        <input type="date" id="dataInicio" class="px-2 py-1 md:px-3 md:py-2 border rounded-lg text-xs md:text-sm flex-1 sm:w-auto">
                                     </div>
-                                    <div class="flex items-center gap-2">
-                                        <label class="text-xs md:text-sm text-gray-600 whitespace-nowrap">Prazo até:</label>
-                                        <input type="date" id="dataFim" class="px-2 py-1 md:px-3 md:py-2 border rounded-lg text-xs md:text-sm w-full sm:w-auto">
+                                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                                        <label class="text-xs md:text-sm text-gray-600 whitespace-nowrap">Até:</label>
+                                        <input type="date" id="dataFim" class="px-2 py-1 md:px-3 md:py-2 border rounded-lg text-xs md:text-sm flex-1 sm:w-auto">
                                     </div>
                                 </div>
                                 <button id="addAssuntoBtn" class="px-3 py-2 md:px-4 md:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs md:text-sm whitespace-nowrap w-full sm:w-auto">
-                                    + Adicionar assunto
+                                    + Adicionar
                                 </button>
                             </div>
                         </div>
@@ -451,38 +647,38 @@ if (isset($_SESSION['divisao_id'])) {
                     
                     <!-- Table -->
                     <div class="bg-white rounded-lg shadow">
-                        <div class="overflow-x-auto">
-                            <table class="w-full table-auto">
+                        <div class="overflow-x-auto table-container">
+                            <table class="w-full table-auto min-w-full">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-2 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hide-mobile">
                                             Chefia
                                         </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-2 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hide-mobile">
                                             Militar Responsável
                                         </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-2 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider assunto-column">
                                             Assunto
                                         </th>
-                                        <th class=" py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-1 py-2 md:py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider hide-mobile">
                                             É crítico?
                                         </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-2 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Prazo
                                         </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-2 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hide-mobile">
                                             Ações a realizar
                                         </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-2 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hide-mobile">
                                             Providências adotadas
                                         </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-2 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hide-mobile">
                                             Estado
                                         </th>
-                                        <th class=" py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-1 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hide-mobile">
                                             Data Atualização
                                         </th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-2 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Ações
                                         </th>
                                     </tr>
@@ -507,9 +703,15 @@ if (isset($_SESSION['divisao_id'])) {
                                 <input type="text" id="filterChefia" placeholder="Chefia" class="px-2 py-2 md:px-3 md:py-2 border rounded-lg text-xs md:text-sm">
                                 <input type="text" id="filterDivisao" placeholder="Divisão" class="px-2 py-2 md:px-3 md:py-2 border rounded-lg text-xs md:text-sm">
                             </div>
-                            <button id="addUsuarioBtn" class="px-3 py-2 md:px-4 md:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs md:text-sm whitespace-nowrap w-full lg:w-auto">
-                                + Adicionar usuário
-                            </button>
+                            <div class="flex items-center gap-4">
+                                <label class="flex items-center text-sm">
+                                    <input type="checkbox" id="mostrarInativos" class="mr-2">
+                                    Mostrar usuários inativos
+                                </label>
+                                <button id="addUsuarioBtn" class="px-3 py-2 md:px-4 md:py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-xs md:text-sm whitespace-nowrap">
+                                    + Adicionar usuário
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -519,7 +721,7 @@ if (isset($_SESSION['divisao_id'])) {
                             <table class="w-full table-auto">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th class="px-2 py-3 md:px-4 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-2 py-3 md:px-4 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hide-mobile-sm">
                                             Identidade Militar
                                         </th>
                                         <th class="px-2 py-3 md:px-4 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -528,10 +730,10 @@ if (isset($_SESSION['divisao_id'])) {
                                         <th class="px-2 py-3 md:px-4 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             Nome de Guerra
                                         </th>
-                                        <th class="px-2 py-3 md:px-4 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-2 py-3 md:px-4 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hide-mobile">
                                             OM/Chefia
                                         </th>
-                                        <th class="px-2 py-3 md:px-4 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <th class="px-2 py-3 md:px-4 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hide-mobile">
                                             Divisão
                                         </th>
                                         <th class="px-2 py-3 md:px-4 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -614,15 +816,16 @@ if (isset($_SESSION['divisao_id'])) {
                             </div>
                         </div>
                     </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Footer -->
-            <footer class="bg-black text-white py-2 md:py-3 px-4 md:px-6 text-center text-xs md:text-sm">
-                <div class="hidden md:block">
+            <footer class="bg-black text-white py-1 md:py-3 px-2 md:px-6 text-center text-xs">
+                <div class="hidden lg:block md:text-sm">
                     Exército Brasileiro • Comando Logístico • Chefia de Material • SMU, Bloco C, Térreo. CEP: 70630-901 • Brasília DF • Divisão de Planejamento, Integração e Controle • Ramal 4374 / 5451
                 </div>
-                <div class="md:hidden">
+                <div class="lg:hidden">
                     Exército Brasileiro • COLOG<br>
                     Divisão de Planejamento, Integração e Controle
                 </div>
@@ -775,8 +978,8 @@ if (isset($_SESSION['divisao_id'])) {
                 </div>
 
                 <div class="flex justify-between pt-4">
-                    <button type="button" id="deleteUsuarioBtn" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 hidden">
-                        Excluir Usuário
+                    <button type="button" id="toggleUsuarioStatusBtn" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 hidden">
+                        Desativar Usuário
                     </button>
                     <div class="flex gap-4">
                         <button type="button" onclick="closeUsuarioModal()" class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">
@@ -1251,9 +1454,10 @@ if (isset($_SESSION['divisao_id'])) {
         let usuarios = [];
         async function fetchUsuarios() {
             try {
-                const res = await fetch('api/get_usuarios.php');
+                const incluirInativos = document.getElementById('mostrarInativos')?.checked || false;
+                const url = `api/get_usuarios.php${incluirInativos ? '?incluir_inativos=1' : ''}`;
+                const res = await fetch(url);
                 usuarios = await res.json();
-                console.log('Usuários carregados:', usuarios.length);
                 renderUsuariosTable(usuarios);
             } catch (err) {
                 console.error('Erro ao carregar usuários:', err);
@@ -1266,8 +1470,6 @@ if (isset($_SESSION['divisao_id'])) {
             try {
                 const res = await fetch('api/get_chefias.php');
                 chefias = await res.json();
-                console.log('Chefias carregadas:', chefias.length);
-                console.log('Dados das chefias:', chefias);
                 renderChefiasTable(chefias);
             } catch (err) {
                 console.error('Erro ao carregar chefias:', err);
@@ -1280,7 +1482,6 @@ if (isset($_SESSION['divisao_id'])) {
             try {
                 const res = await fetch('api/get_divisoes.php');
                 divisoes = await res.json();
-                console.log('Divisões carregadas:', divisoes.length);
                 renderDivisoesTable(divisoes);
             } catch (err) {
                 console.error('Erro ao carregar divisões:', err);
@@ -1324,11 +1525,79 @@ if (isset($_SESSION['divisao_id'])) {
                 const sidebar = document.getElementById('sidebar');
                 const overlay = document.getElementById('sidebarOverlay');
                 
+                // Fechar sidebar automaticamente quando a tela aumentar
                 if (window.innerWidth > 768) {
                     sidebar.classList.remove('open');
                     overlay.classList.remove('show');
                 }
+                
+                // Ajustar tamanhos de elementos responsivos
+                adjustResponsiveElements();
             });
+            
+            // Configurar eventos de toque para melhor experiência mobile
+            setupTouchEvents();
+        }
+        
+        // Ajustar elementos responsivos baseado no tamanho da tela
+        function adjustResponsiveElements() {
+            const isMobile = window.innerWidth <= 768;
+            const isSmallMobile = window.innerWidth <= 480;
+            
+            // Ajustar padding do content area
+            const contentArea = document.querySelector('.flex-1.overflow-y-auto');
+            if (contentArea) {
+                if (isSmallMobile) {
+                    contentArea.style.padding = '0.25rem';
+                } else if (isMobile) {
+                    contentArea.style.padding = '0.5rem';
+                } else {
+                    contentArea.style.padding = '';
+                }
+            }
+            
+            // Ajustar tabelas para mobile
+            const tables = document.querySelectorAll('table');
+            tables.forEach(table => {
+                if (isMobile) {
+                    table.style.fontSize = isSmallMobile ? '0.55rem' : '0.7rem';
+                } else {
+                    table.style.fontSize = '';
+                }
+            });
+            
+            // Reajustar conteúdo da tabela de assuntos quando redimensionar
+            if (typeof assuntos !== 'undefined' && assuntos.length > 0) {
+                applyFilters();
+            }
+        }
+        
+        // Configurar eventos de toque para mobile
+        function setupTouchEvents() {
+            // Adicionar suporte a swipe para fechar sidebar
+            let startX = 0;
+            let currentX = 0;
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (sidebar) {
+                sidebar.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                }, { passive: true });
+                
+                sidebar.addEventListener('touchmove', (e) => {
+                    currentX = e.touches[0].clientX;
+                }, { passive: true });
+                
+                sidebar.addEventListener('touchend', () => {
+                    const diffX = startX - currentX;
+                    
+                    // Se swipe para esquerda com mais de 50px, fechar sidebar
+                    if (diffX > 50 && sidebar.classList.contains('open')) {
+                        toggleSidebar();
+                    }
+                }, { passive: true });
+            }
         }
 
         // Inicializar informações do usuário
@@ -1692,6 +1961,13 @@ if (isset($_SESSION['divisao_id'])) {
                     element.addEventListener('input', filterUsuarios);
                 }
             });
+            
+            // Event listener para checkbox de mostrar inativos
+            const mostrarInativosCheckbox = document.getElementById('mostrarInativos');
+            if (mostrarInativosCheckbox) {
+                mostrarInativosCheckbox.removeEventListener('change', fetchUsuarios);
+                mostrarInativosCheckbox.addEventListener('change', fetchUsuarios);
+            }
         }
 
         // Filtros de assuntos
@@ -1813,7 +2089,7 @@ if (isset($_SESSION['divisao_id'])) {
             tbody.innerHTML = '';
             
             if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-4 text-center text-gray-500">Nenhum assunto encontrado</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="3" class="px-6 py-4 text-center text-gray-500 md:hidden">Nenhum assunto encontrado</td><td colspan="10" class="px-6 py-4 text-center text-gray-500 hidden md:table-cell">Nenhum assunto encontrado</td></tr>';
                 return;
             }
             
@@ -1829,33 +2105,38 @@ if (isset($_SESSION['divisao_id'])) {
                     ? `${assunto.criadoPorPg} ${assunto.criadoPorNome}` 
                     : assunto.criadoPor || '-';
                 
+                // Limitar tamanho do assunto apenas para mobile
+                const assuntoExibido = window.innerWidth <= 768 
+                    ? (assunto.assunto.length > 50 ? assunto.assunto.substring(0, 50) + '...' : assunto.assunto)
+                    : assunto.assunto;
+                
                 row.innerHTML = `
-                    <td class="px-6 py-4 text-sm text-gray-900 break-words max-w-xs">${assunto.chefia}</td>
-                    <td class="px-6 py-4 text-sm text-gray-900 break-words max-w-xs">${militarResponsavel}</td>
-                    <td class="px-6 py-4 text-sm text-gray-900 break-words max-w-sm">${assunto.assunto}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <td class="px-6 py-4 text-sm text-gray-900 break-words max-w-xs hide-mobile">${assunto.chefia}</td>
+                    <td class="px-6 py-4 text-sm text-gray-900 break-words max-w-xs hide-mobile">${militarResponsavel}</td>
+                    <td class="px-6 py-4 text-sm text-gray-900 break-words assunto-column" title="${assunto.assunto}">${assuntoExibido}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm hide-mobile">
                         <span class="px-2 py-1 text-xs font-medium rounded-full ${assunto.critico === 'sim' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}">
                             ${assunto.critico === 'sim' ? 'Sim' : 'Não'}
                         </span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatDate(assunto.prazo)}</td>
-                    <td class="px-6 py-4 text-sm text-gray-900 break-words max-w-md">${acoesResumo || '-'}</td>
-                    <td class="px-6 py-4 text-sm text-gray-900 break-words max-w-md">${providenciasResumo || '-'}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <td class="px-6 py-4 text-sm text-gray-900 break-words max-w-md hide-mobile">${acoesResumo || '-'}</td>
+                    <td class="px-6 py-4 text-sm text-gray-900 break-words max-w-md hide-mobile">${providenciasResumo || '-'}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm hide-mobile">
                         <span class="px-2 py-1 text-xs font-medium rounded-full ${assunto.estado === 'concluido' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
                             ${assunto.estado === 'concluido' ? 'Concluído' : 'Pendente'}
                         </span>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${formatDate(assunto.dataAtualizacao)}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 hide-mobile">${formatDate(assunto.dataAtualizacao)}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        <div class="flex gap-2">
-                            <button onclick="detalharAssunto(${assunto.id})" class="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700">
+                        <div class="flex gap-1 flex-col sm:flex-row sm:gap-2">
+                            <button onclick="detalharAssunto(${assunto.id})" class="px-2 py-1 sm:px-3 bg-blue-600 text-white text-xs rounded hover:bg-blue-700">
                                 Detalhar
                             </button>
-                            <button onclick="editarAssunto(${assunto.id})" class="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700">
+                            <button onclick="editarAssunto(${assunto.id})" class="px-2 py-1 sm:px-3 bg-green-600 text-white text-xs rounded hover:bg-green-700">
                                 Editar
                             </button>
-                            <button onclick="confirmarExclusaoAssunto(${assunto.id}, '${assunto.assunto.substring(0, 50).replace(/'/g, "\\'")}...')" class="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700">
+                            <button onclick="confirmarExclusaoAssunto(${assunto.id}, '${assunto.assunto.substring(0, 50).replace(/'/g, "\\'")}...')" class="px-2 py-1 sm:px-3 bg-red-600 text-white text-xs rounded hover:bg-red-700">
                                 Excluir
                             </button>
                         </div>
@@ -1934,12 +2215,24 @@ if (isset($_SESSION['divisao_id'])) {
                     `<button onclick="editUsuario(${usuario.id})" class="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700">Editar</button>` :
                     `<span class="px-3 py-1 bg-gray-300 text-gray-500 text-xs rounded">Sem permissão</span>`;
                 
+                // Adicionar classe visual para usuários inativos
+                const rowClass = usuario.ativo == 0 ? 'opacity-50 bg-gray-50' : '';
+                row.className = rowClass;
+                
+                // Indicador de status do usuário
+                const statusBadge = usuario.ativo == 1 ? 
+                    '<span class="px-2 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full">Ativo</span>' :
+                    '<span class="px-2 py-1 text-xs font-semibold text-red-800 bg-red-100 rounded-full">Inativo</span>';
+                
                 row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${usuario.idt_Mil}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 hide-mobile-sm">${usuario.idt_Mil}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${usuario.pg}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${usuario.nome}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${usuario.chefia}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${usuario.divisao}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        ${usuario.nome}
+                        ${usuario.ativo == 0 ? '<span class="text-red-500 text-xs ml-2">(Inativo)</span>' : ''}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 hide-mobile">${usuario.chefia}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 hide-mobile">${usuario.divisao}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${perfilLabel(usuario.perfil_id)}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">
                         ${editButton}
@@ -2073,7 +2366,21 @@ if (isset($_SESSION['divisao_id'])) {
             if (isEdit) {
                 document.getElementById('usuarioModalTitle').textContent = 'Editar Usuário';
                 document.getElementById('saveUsuarioBtn').textContent = 'Salvar usuário';
-                document.getElementById('deleteUsuarioBtn').classList.remove('hidden');
+                document.getElementById('toggleUsuarioStatusBtn').classList.remove('hidden');
+                
+                // Atualizar texto do botão baseado no status atual do usuário
+                const btnToggle = document.getElementById('toggleUsuarioStatusBtn');
+                if (editingUsuario && editingUsuario.ativo == 1) {
+                    btnToggle.textContent = 'Desativar Usuário';
+                    btnToggle.className = 'px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700';
+                } else if (editingUsuario && editingUsuario.ativo == 0) {
+                    btnToggle.textContent = 'Ativar Usuário';
+                    btnToggle.className = 'px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700';
+                } else {
+                    // Caso padrão se não houver informação de status
+                    btnToggle.textContent = 'Desativar Usuário';
+                    btnToggle.className = 'px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700';
+                }
                 
                 // Na edição, mostrar campo de senha tradicional
                 const senhaContainer = senhaField.closest('div');
@@ -2084,7 +2391,7 @@ if (isset($_SESSION['divisao_id'])) {
             } else {
                 document.getElementById('usuarioModalTitle').textContent = 'Adicionar Novo Usuário';
                 document.getElementById('saveUsuarioBtn').textContent = 'Adicionar usuário';
-                document.getElementById('deleteUsuarioBtn').classList.add('hidden');
+                document.getElementById('toggleUsuarioStatusBtn').classList.add('hidden');
                 editingUsuario = null;
                 
                 // Na criação, mostrar mensagem sobre senha padrão
@@ -2222,6 +2529,7 @@ if (isset($_SESSION['divisao_id'])) {
 
         async function editUsuario(usuarioId) {
             const usuario = usuarios.find(u => u.id == usuarioId);
+            
             if (!usuario) {
                 return;
             }
@@ -2732,27 +3040,33 @@ if (isset($_SESSION['divisao_id'])) {
             })();
         });
 
-        document.getElementById('deleteUsuarioBtn').addEventListener('click', async function() {
-            if (editingUsuario && confirm('Tem certeza que deseja excluir este usuário?')) {
-                try {
-                    const response = await fetch('api/delete_usuario.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ id: editingUsuario.id })
-                    });
-                    
-                    const result = await response.json();
-                    
-                    if (response.ok) {
-                        await fetchUsuarios(); // Recarrega a lista do servidor
-                        closeUsuarioModal();
-                    } else {
-                        alert('Erro ao excluir usuário: ' + (result.error || 'Erro desconhecido'));
+        document.getElementById('toggleUsuarioStatusBtn').addEventListener('click', async function() {
+            if (editingUsuario) {
+                const acao = editingUsuario.ativo == 1 ? 'desativar' : 'ativar';
+                const confirmMessage = `Tem certeza que deseja ${acao} o usuário "${editingUsuario.nome}"?`;
+                
+                if (confirm(confirmMessage)) {
+                    try {
+                        const response = await fetch('api/toggle_usuario_status.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ id: editingUsuario.id })
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (response.ok) {
+                            alert(result.message);
+                            await fetchUsuarios(); // Recarrega a lista do servidor
+                            closeUsuarioModal();
+                        } else {
+                            alert('Erro ao alterar status do usuário: ' + (result.error || 'Erro desconhecido'));
+                        }
+                    } catch (err) {
+                        alert('Erro ao conectar com o servidor');
                     }
-                } catch (err) {
-                    alert('Erro ao conectar com o servidor');
                 }
             }
         });
@@ -3144,7 +3458,6 @@ function adicionarAcaoEdicao(acao = null, index = null, isReadOnly = true) {
     }
     
     container.appendChild(acaoDiv);
-    console.log('Ação adicionada ao container');
 }
 
 // Função para adicionar nova ação
@@ -3388,14 +3701,9 @@ function editarAcaoExistente(acaoId) {
 }
 
 function salvarAcao(acaoId) {
-    console.log('=== INÍCIO SALVAR AÇÃO ===');
-    console.log('salvarAcao chamada com ID:', acaoId, 'tipo:', typeof acaoId);
-    
     const acaoTextarea = document.querySelector(`textarea[name="acao_${acaoId}"]`);
     const providenciaTextarea = document.querySelector(`textarea[name="providencia_${acaoId}"]`);
     const estadoSelect = document.querySelector(`select[name="estado_acao_${acaoId}"]`);
-    
-    console.log('Elementos encontrados:', { acaoTextarea, providenciaTextarea, estadoSelect });
     
     if (!acaoTextarea || !acaoTextarea.value.trim()) {
         alert('A ação é obrigatória');
@@ -3408,16 +3716,10 @@ function salvarAcao(acaoId) {
         estado: estadoSelect ? estadoSelect.value : 'pendente'
     };
     
-    console.log('Dados da ação coletados:', acaoData);
-    console.log('Estado selecionado:', estadoSelect ? estadoSelect.value : 'SEM SELECT ENCONTRADO');
-    console.log('Estado atual do array de ações ANTES:', JSON.parse(JSON.stringify(assuntoAtual.acoes)));
-    
     // Verifica se é uma ação existente ou nova
-    // Converter acaoId para número se for uma string numérica
     const acaoIdNumerico = typeof acaoId === 'string' && !acaoId.startsWith('nova_') ? parseInt(acaoId) : acaoId;
     
     if (typeof acaoIdNumerico === 'number' && !isNaN(acaoIdNumerico) && assuntoAtual.acoes[acaoIdNumerico]) {
-        console.log('FLUXO: Atualizando ação existente no índice:', acaoIdNumerico);
         // Ação existente - atualizar mantendo a posição original e preservando o responsável
         const acaoExistente = assuntoAtual.acoes[acaoIdNumerico];
         assuntoAtual.acoes[acaoIdNumerico] = { 
@@ -3429,52 +3731,37 @@ function salvarAcao(acaoId) {
             responsavelPg: acaoExistente.responsavelPg,
             responsavelNome: acaoExistente.responsavelNome
         };
-        console.log('Ação atualizada:', assuntoAtual.acoes[acaoIdNumerico]);
-        acaoId = acaoIdNumerico; // Usar o ID numérico para o resto da função
+        acaoId = acaoIdNumerico;
     } else if (typeof acaoId === 'string' && acaoId.startsWith('nova_')) {
-        console.log('FLUXO: Criando nova ação com ID string:', acaoId);
         // Nova ação - adicionar ao array
         const novaAcao = {
-            responsavel: currentUser.id || '1', // Usar o ID do usuário atual para novas ações
+            responsavel: currentUser.id || '1',
             dataAtualizacao: new Date().toISOString().split('T')[0],
             ...acaoData
         };
         
-        // É uma nova ação, adicionar ao final do array
         assuntoAtual.acoes.push(novaAcao);
-        console.log('Nova ação adicionada ao array. Tamanho do array:', assuntoAtual.acoes.length);
-        
-        // Atualizar o ID para o índice correto
         const novoIndice = assuntoAtual.acoes.length - 1;
-        console.log('Novo índice da ação:', novoIndice);
         
         const acaoDiv = document.getElementById(`acao_${acaoId}`);
         if (acaoDiv) {
             acaoDiv.id = `acao_${novoIndice}`;
-            console.log('ID da div atualizado para:', acaoDiv.id);
         }
         acaoId = novoIndice;
     } else {
-        console.log('FLUXO: Caso não esperado - acaoId:', acaoId, 'tipo:', typeof acaoId);
         console.error('ID de ação inválido:', acaoId);
         return;
     }
-    
-    console.log('Estado atual do array de ações DEPOIS:', JSON.parse(JSON.stringify(assuntoAtual.acoes)));
-    console.log('Recriando ação em modo read-only com ID:', acaoId);
     
     // Recriar em modo read-only
     const acaoDiv = document.getElementById(`acao_${acaoId}`);
     if (acaoDiv) {
         acaoDiv.remove();
         const indiceFinal = typeof acaoId === 'string' ? assuntoAtual.acoes.length - 1 : acaoId;
-        console.log('Recriando com índice final:', indiceFinal);
         adicionarAcaoEdicao(assuntoAtual.acoes[indiceFinal], indiceFinal, true);
     } else {
         console.error('Div da ação não encontrada:', `acao_${acaoId}`);
     }
-    
-    console.log('=== FIM SALVAR AÇÃO ===');
 }
 
     function cancelarEdicaoAcao(acaoId) {
@@ -3694,6 +3981,7 @@ function salvarAcao(acaoId) {
         setDataInicio();
         setupSidebarLinks();
         setupResponsiveEvents();
+        adjustResponsiveElements();
     });
 </script>
 </body>
