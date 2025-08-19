@@ -189,6 +189,34 @@ if (isset($_SESSION['divisao_id'])) {
                 -webkit-overflow-scrolling: touch;
                 max-width: 100vw;
             }
+            
+            /* Estilos para campos de pesquisa retráteis */
+            .search-arrow-transition {
+                transition: transform 0.2s ease-in-out;
+            }
+            
+            /* Estilos para paginação - usando principalmente Tailwind */
+            .pagination-container {
+                /* Container principal com fundo azul claro */
+            }
+            
+            .pagination-btn {
+                /* Botões de paginação customizados */
+                transition: all 0.2s ease-in-out;
+            }
+            
+            .pagination-btn:hover:not(:disabled) {
+                transform: translateY(-1px);
+            }
+            
+            .pagination-btn.active {
+                box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+            }
+            
+            .pagination-btn:disabled {
+                cursor: not-allowed;
+                opacity: 0.5;
+            }
         }
     
         @media (max-width: 640px) {
@@ -643,6 +671,67 @@ if (isset($_SESSION['divisao_id'])) {
                                 </button>
                             </div>
                         </div>
+                        
+                        <!-- Divisor com botão de pesquisa avançada -->
+                        <div class="border-t border-gray-200 mt-4 pt-4">
+                            <div class="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors" 
+                                 onclick="toggleSearchFields()" id="searchHeader">
+                                <div class="flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                    </svg>
+                                    <span class="text-sm md:text-base font-medium text-gray-900">Pesquisa Avançada</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs md:text-sm text-gray-500" id="searchStatus">Clique para expandir</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5 text-gray-400 search-arrow-transition" 
+                                         id="searchArrow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </div>
+                            </div>
+                            
+                            <!-- Conteúdo dos campos de pesquisa (inicialmente oculto) -->
+                            <div id="searchFields" class="hidden mt-4 pt-4 border-t border-gray-100">
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
+                                    <div>
+                                        <label for="searchAssunto" class="block text-xs md:text-sm font-medium text-gray-700 mb-1">Pesquisar por assunto:</label>
+                                        <div class="relative">
+                                            <input type="text" id="searchAssunto" placeholder="Digite para pesquisar assunto..." 
+                                                   class="w-full px-2 py-1 md:px-3 md:py-2 border rounded-lg text-xs md:text-sm pr-8">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5 absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label for="searchAcoes" class="block text-xs md:text-sm font-medium text-gray-700 mb-1">Pesquisar por ações a realizar:</label>
+                                        <div class="relative">
+                                            <input type="text" id="searchAcoes" placeholder="Digite para pesquisar ações..."
+                                                   class="w-full px-2 py-1 md:px-3 md:py-2 border rounded-lg text-xs md:text-sm pr-8">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5 absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label for="searchProvidencias" class="block text-xs md:text-sm font-medium text-gray-700 mb-1">Pesquisar por providências adotadas:</label>
+                                        <div class="relative">
+                                            <input type="text" id="searchProvidencias" placeholder="Digite para pesquisar providências..."
+                                                   class="w-full px-2 py-1 md:px-3 md:py-2 border rounded-lg text-xs md:text-sm pr-8">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-5 md:w-5 absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex justify-center">
+                                    <button id="clearSearchBtn" class="px-4 py-2 md:px-6 md:py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-xs md:text-sm whitespace-nowrap">
+                                        Limpar todos os filtros de pesquisa
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                     <!-- Table -->
@@ -687,6 +776,8 @@ if (isset($_SESSION['divisao_id'])) {
                                     <!-- Dados serão inseridos aqui via JavaScript -->
                                 </tbody>
                             </table>
+                        </div>
+                        <div id="assuntosPagination" class="px-4 py-3 border-t border-gray-200">
                         </div>
                     </div>
                 </div>
@@ -749,6 +840,8 @@ if (isset($_SESSION['divisao_id'])) {
                                 </tbody>
                             </table>
                         </div>
+                        <div id="usuariosPagination" class="px-4 py-3 border-t border-gray-200">
+                        </div>
                     </div>
                 </div>
 
@@ -782,6 +875,8 @@ if (isset($_SESSION['divisao_id'])) {
                                     </tbody>
                                 </table>
                             </div>
+                            <div id="chefiasPagination" class="px-4 py-3 border-t border-gray-200">
+                            </div>
                         </div>
 
                         <!-- Divisões -->
@@ -813,6 +908,8 @@ if (isset($_SESSION['divisao_id'])) {
                                         <!-- Dados serão inseridos aqui via JavaScript -->
                                     </tbody>
                                 </table>
+                            </div>
+                            <div id="divisoesPagination" class="px-4 py-3 border-t border-gray-200">
                             </div>
                         </div>
                     </div>
@@ -1382,6 +1479,186 @@ if (isset($_SESSION['divisao_id'])) {
             primeiro_login: <?php echo isset($_SESSION['primeiro_login']) && $_SESSION['primeiro_login'] ? 'true' : 'false'; ?>
         };
 
+        // Variáveis de paginação
+        let currentPage = {
+            assuntos: 1,
+            usuarios: 1,
+            chefias: 1,
+            divisoes: 1
+        };
+        let itemsPerPage = 10;
+        let totalItems = {
+            assuntos: 0,
+            usuarios: 0,
+            chefias: 0,
+            divisoes: 0
+        };
+        let filteredData = {
+            assuntos: [],
+            usuarios: [],
+            chefias: [],
+            divisoes: []
+        };
+
+        // Funções de paginação
+        function createPagination(tableType, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            const totalPages = Math.ceil(totalItems[tableType] / itemsPerPage);
+            const current = currentPage[tableType];
+            
+            // Informações da paginação (lado esquerdo)
+            const start = (current - 1) * itemsPerPage + 1;
+            const end = Math.min(current * itemsPerPage, totalItems[tableType]);
+            
+            let paginationHTML = `
+                <div class="flex flex-col md:flex-row justify-between items-center rounded-lg gap-3">
+                    <!-- Contador de itens (lado esquerdo) -->
+                    <div class="text-sm text-gray-700 font-medium">
+                        ${start}-${end} of ${totalItems[tableType]} items
+                    </div>
+                    
+                    <!-- Botões de navegação (centro) -->
+                    <div class="flex items-center gap-1">
+                        <!-- Botão anterior -->
+                        <button onclick="changePage('${tableType}', ${current - 1})" 
+                                ${current <= 1 ? 'disabled' : ''} 
+                                class="pagination-btn w-8 h-8 flex items-center justify-center text-sm font-medium text-blue-600 bg-white border border-blue-300 rounded hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-300">
+                            &laquo;
+                        </button>`;
+            
+            // Números das páginas
+            const startPage = Math.max(1, current - 2);
+            const endPage = Math.min(totalPages, current + 2);
+            
+            if (startPage > 1) {
+                paginationHTML += `
+                    <button onclick="changePage('${tableType}', 1)" 
+                            class="pagination-btn w-8 h-8 flex items-center justify-center text-sm font-medium text-blue-600 bg-white border border-blue-300 rounded hover:bg-blue-50">
+                        1
+                    </button>`;
+                if (startPage > 2) {
+                    paginationHTML += `<span class="mx-1 text-gray-500">...</span>`;
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const isActive = i === current;
+                paginationHTML += `
+                    <button onclick="changePage('${tableType}', ${i})" 
+                            class="pagination-btn w-8 h-8 flex items-center justify-center text-sm font-medium rounded border ${isActive ? 'bg-blue-600 text-white border-blue-600 active' : 'text-blue-600 bg-white border-blue-300 hover:bg-blue-50'}">
+                        ${i}
+                    </button>`;
+            }
+            
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    paginationHTML += `<span class="mx-1 text-gray-500">...</span>`;
+                }
+                paginationHTML += `
+                    <button onclick="changePage('${tableType}', ${totalPages})" 
+                            class="pagination-btn w-8 h-8 flex items-center justify-center text-sm font-medium text-blue-600 bg-white border border-blue-300 rounded hover:bg-blue-50">
+                        ${totalPages}
+                    </button>`;
+            }
+            
+            // Botão próximo
+            paginationHTML += `
+                        <button onclick="changePage('${tableType}', ${current + 1})" 
+                                ${current >= totalPages ? 'disabled' : ''} 
+                                class="pagination-btn w-8 h-8 flex items-center justify-center text-sm font-medium text-blue-600 bg-white border border-blue-300 rounded hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-300">
+                            &raquo;
+                        </button>
+                    </div>
+                    
+                    <!-- Seletor de itens por página (lado direito) -->
+                    <div class="flex items-center gap-2 text-sm text-gray-700">
+                        <select onchange="changeItemsPerPage('${tableType}', this.value)" 
+                                id="${tableType}ItemsSelect"
+                                class="bg-white border border-blue-300 text-blue-600 text-sm rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option value="10" ${itemsPerPage === 10 ? 'selected' : ''}>10</option>
+                            <option value="25" ${itemsPerPage === 25 ? 'selected' : ''}>25</option>
+                            <option value="50" ${itemsPerPage === 50 ? 'selected' : ''}>50</option>
+                            <option value="100" ${itemsPerPage === 100 ? 'selected' : ''}>100</option>
+                        </select>
+                        <span class="font-medium">itens por página</span>
+                    </div>
+                </div>`;
+            
+            container.innerHTML = paginationHTML;
+        }
+
+        function changePage(tableType, page) {
+            const totalPages = Math.ceil(totalItems[tableType] / itemsPerPage);
+            if (page < 1 || page > totalPages) return;
+            
+            currentPage[tableType] = page;
+            
+            // Renderizar tabela com dados paginados
+            switch(tableType) {
+                case 'assuntos':
+                    renderTablePaginated(filteredData.assuntos, 'assuntosTableBody', 'assuntos');
+                    createPagination('assuntos', 'assuntosPagination');
+                    break;
+                case 'usuarios':
+                    renderUsuariosTablePaginated(filteredData.usuarios);
+                    createPagination('usuarios', 'usuariosPagination');
+                    break;
+                case 'chefias':
+                    renderChefiasTablePaginated(filteredData.chefias);
+                    createPagination('chefias', 'chefiasPagination');
+                    break;
+                case 'divisoes':
+                    renderDivisoesTablePaginated(filteredData.divisoes);
+                    createPagination('divisoes', 'divisoesPagination');
+                    break;
+            }
+        }
+
+        function changeItemsPerPage(tableType, newItemsPerPage) {
+            itemsPerPage = parseInt(newItemsPerPage);
+            
+            // Resetar todas as páginas para 1
+            currentPage.assuntos = 1;
+            currentPage.usuarios = 1;
+            currentPage.chefias = 1;
+            currentPage.divisoes = 1;
+            
+            // Sincronizar todos os seletores
+            const selectors = ['assuntosItemsSelect', 'usuariosItemsSelect', 'chefiasItemsSelect', 'divisoesItemsSelect'];
+            selectors.forEach(selectorId => {
+                const selector = document.getElementById(selectorId);
+                if (selector) {
+                    selector.value = newItemsPerPage;
+                }
+            });
+            
+            // Atualizar todas as tabelas
+            if (filteredData.assuntos.length > 0) {
+                renderTablePaginated(filteredData.assuntos, 'assuntosTableBody', 'assuntos');
+                createPagination('assuntos', 'assuntosPagination');
+            }
+            if (filteredData.usuarios.length > 0) {
+                renderUsuariosTablePaginated(filteredData.usuarios);
+                createPagination('usuarios', 'usuariosPagination');
+            }
+            if (filteredData.chefias.length > 0) {
+                renderChefiasTablePaginated(filteredData.chefias);
+                createPagination('chefias', 'chefiasPagination');
+            }
+            if (filteredData.divisoes.length > 0) {
+                renderDivisoesTablePaginated(filteredData.divisoes);
+                createPagination('divisoes', 'divisoesPagination');
+            }
+        }
+
+        function getPaginatedData(data, tableType) {
+            const start = (currentPage[tableType] - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            return data.slice(start, end);
+        }
+
         // Exibir/ocultar abas do sidebar conforme perfil
         document.addEventListener('DOMContentLoaded', function() {
             // Verificar se é o primeiro login e mostrar modal obrigatório
@@ -1444,6 +1721,14 @@ if (isset($_SESSION['divisao_id'])) {
             try {
                 const res = await fetch('api/get_assuntos.php');
                 assuntos = await res.json();
+                
+                // Ordenar assuntos por prazo (do menor para o maior)
+                assuntos.sort((a, b) => {
+                    const dateA = new Date(a.prazo);
+                    const dateB = new Date(b.prazo);
+                    return dateA - dateB;
+                });
+                
                 applyFilters();
                 updateResumo();
             } catch (err) {
@@ -1659,6 +1944,48 @@ if (isset($_SESSION['divisao_id'])) {
                     break;
                 case 'todos':
                     applyFilters();
+                    // Reconfigurar listeners para pesquisa caso não estejam funcionando
+                    setTimeout(() => {
+                        const searchAssuntoEl = document.getElementById('searchAssunto');
+                        const searchAcoesEl = document.getElementById('searchAcoes');
+                        const searchProvidenciasEl = document.getElementById('searchProvidencias');
+                        const clearSearchBtnEl = document.getElementById('clearSearchBtn');
+                        
+                        if (searchAssuntoEl && !searchAssuntoEl.hasAttribute('data-listener-added')) {
+                            searchAssuntoEl.addEventListener('input', function() {
+                                applyFilters();
+                                updateSearchStatus();
+                            });
+                            searchAssuntoEl.setAttribute('data-listener-added', 'true');
+                        }
+                        
+                        if (searchAcoesEl && !searchAcoesEl.hasAttribute('data-listener-added')) {
+                            searchAcoesEl.addEventListener('input', function() {
+                                applyFilters();
+                                updateSearchStatus();
+                            });
+                            searchAcoesEl.setAttribute('data-listener-added', 'true');
+                        }
+                        
+                        if (searchProvidenciasEl && !searchProvidenciasEl.hasAttribute('data-listener-added')) {
+                            searchProvidenciasEl.addEventListener('input', function() {
+                                applyFilters();
+                                updateSearchStatus();
+                            });
+                            searchProvidenciasEl.setAttribute('data-listener-added', 'true');
+                        }
+                        
+                        if (clearSearchBtnEl && !clearSearchBtnEl.hasAttribute('data-listener-added')) {
+                            clearSearchBtnEl.addEventListener('click', function() {
+                                if (searchAssuntoEl) searchAssuntoEl.value = '';
+                                if (searchAcoesEl) searchAcoesEl.value = '';
+                                if (searchProvidenciasEl) searchProvidenciasEl.value = '';
+                                applyFilters();
+                                updateSearchStatus();
+                            });
+                            clearSearchBtnEl.setAttribute('data-listener-added', 'true');
+                        }
+                    }, 50);
                     break;
                 case 'usuarios':
                     // Garantir que todos os dados necessários estejam carregados
@@ -1970,6 +2297,84 @@ if (isset($_SESSION['divisao_id'])) {
             }
         }
 
+        // Função para controlar a expansão/retração dos campos de pesquisa
+        function toggleSearchFields() {
+            const searchFields = document.getElementById('searchFields');
+            const searchArrow = document.getElementById('searchArrow');
+            const searchStatus = document.getElementById('searchStatus');
+            
+            if (searchFields.classList.contains('hidden')) {
+                // Expandir
+                searchFields.classList.remove('hidden');
+                searchArrow.style.transform = 'rotate(180deg)';
+                searchStatus.textContent = 'Clique para retrair';
+                
+                // Adicionar animação suave
+                searchFields.style.maxHeight = '0';
+                searchFields.style.overflow = 'hidden';
+                searchFields.style.transition = 'max-height 0.3s ease-out';
+                
+                // Forçar reflow e então animar
+                setTimeout(() => {
+                    searchFields.style.maxHeight = searchFields.scrollHeight + 'px';
+                }, 10);
+                
+                // Remover max-height após a animação
+                setTimeout(() => {
+                    searchFields.style.maxHeight = 'none';
+                    searchFields.style.overflow = 'visible';
+                }, 300);
+                
+            } else {
+                // Retrair
+                searchFields.style.maxHeight = searchFields.scrollHeight + 'px';
+                searchFields.style.overflow = 'hidden';
+                searchFields.style.transition = 'max-height 0.3s ease-in';
+                
+                // Forçar reflow e então animar
+                setTimeout(() => {
+                    searchFields.style.maxHeight = '0';
+                }, 10);
+                
+                // Ocultar completamente após a animação
+                setTimeout(() => {
+                    searchFields.classList.add('hidden');
+                    searchFields.style.maxHeight = '';
+                    searchFields.style.overflow = '';
+                    searchFields.style.transition = '';
+                }, 300);
+                
+                searchArrow.style.transform = 'rotate(0deg)';
+                updateSearchStatus();
+            }
+        }
+        
+        // Função para atualizar o status da pesquisa
+        function updateSearchStatus() {
+            const searchAssunto = document.getElementById('searchAssunto');
+            const searchAcoes = document.getElementById('searchAcoes');
+            const searchProvidencias = document.getElementById('searchProvidencias');
+            const searchStatus = document.getElementById('searchStatus');
+            const searchFields = document.getElementById('searchFields');
+            
+            if (searchFields && searchFields.classList.contains('hidden')) {
+                let activeFilters = 0;
+                if (searchAssunto && searchAssunto.value.trim()) activeFilters++;
+                if (searchAcoes && searchAcoes.value.trim()) activeFilters++;
+                if (searchProvidencias && searchProvidencias.value.trim()) activeFilters++;
+                
+                if (activeFilters > 0) {
+                    searchStatus.textContent = `${activeFilters} filtro(s) ativo(s) - Clique para expandir`;
+                    searchStatus.classList.add('text-blue-600', 'font-medium');
+                    searchStatus.classList.remove('text-gray-500');
+                } else {
+                    searchStatus.textContent = 'Clique para expandir';
+                    searchStatus.classList.remove('text-blue-600', 'font-medium');
+                    searchStatus.classList.add('text-gray-500');
+                }
+            }
+        }
+
         // Filtros de assuntos
         function filterAssuntos(filter) {
             currentFilter = filter;
@@ -1992,6 +2397,15 @@ if (isset($_SESSION['divisao_id'])) {
         function applyFilters() {
             const dataInicio = document.getElementById('dataInicio').value;
             const dataFim = document.getElementById('dataFim').value;
+            
+            // Verificar se os elementos de pesquisa existem antes de tentar acessá-los
+            const searchAssuntoEl = document.getElementById('searchAssunto');
+            const searchAcoesEl = document.getElementById('searchAcoes');
+            const searchProvidenciasEl = document.getElementById('searchProvidencias');
+            
+            const searchAssunto = searchAssuntoEl ? searchAssuntoEl.value.toLowerCase() : '';
+            const searchAcoes = searchAcoesEl ? searchAcoesEl.value.toLowerCase() : '';
+            const searchProvidencias = searchProvidenciasEl ? searchProvidenciasEl.value.toLowerCase() : '';
             
             let filteredAssuntos = assuntos;
             
@@ -2017,7 +2431,40 @@ if (isset($_SESSION['divisao_id'])) {
                 filteredAssuntos = filteredAssuntos.filter(a => a.chefia === currentChefiaFilter);
             }
             
-            renderTable(filteredAssuntos);
+            // Filtrar por texto no assunto
+            if (searchAssunto) {
+                filteredAssuntos = filteredAssuntos.filter(a => 
+                    a.assunto && a.assunto.toLowerCase().includes(searchAssunto)
+                );
+            }
+            
+            // Filtrar por texto nas ações a realizar
+            if (searchAcoes) {
+                filteredAssuntos = filteredAssuntos.filter(a => {
+                    // Verificar se alguma ação contém o texto pesquisado
+                    return a.acoes && a.acoes.some(acao => 
+                        acao.acao && acao.acao.toLowerCase().includes(searchAcoes)
+                    );
+                });
+            }
+            
+            // Filtrar por texto nas providências adotadas
+            if (searchProvidencias) {
+                filteredAssuntos = filteredAssuntos.filter(a => {
+                    // Verificar se alguma providência contém o texto pesquisado
+                    return a.acoes && a.acoes.some(acao => 
+                        acao.providencia && acao.providencia.toLowerCase().includes(searchProvidencias)
+                    );
+                });
+            }
+            
+            // Atualizar dados filtrados e renderizar com paginação
+            filteredData.assuntos = filteredAssuntos;
+            totalItems.assuntos = filteredAssuntos.length;
+            currentPage.assuntos = 1; // Reset para primeira página
+            
+            renderTablePaginated(filteredAssuntos, 'assuntosTableBody', 'assuntos');
+            createPagination('assuntos', 'assuntosPagination');
             updateTotalCount(filteredAssuntos.length, 'assuntos');
         }
 
@@ -2085,7 +2532,17 @@ if (isset($_SESSION['divisao_id'])) {
         }
 
         function renderTable(data) {
-            const tbody = document.getElementById('assuntosTableBody');
+            // Armazenar dados filtrados e atualizar paginação
+            filteredData.assuntos = data;
+            totalItems.assuntos = data.length;
+            currentPage.assuntos = 1; // Reset para primeira página
+            
+            renderTablePaginated(data, 'assuntosTableBody', 'assuntos');
+            createPagination('assuntos', 'assuntosPagination');
+        }
+
+        function renderTablePaginated(data, tbodyId, tableType = 'assuntos') {
+            const tbody = document.getElementById(tbodyId);
             tbody.innerHTML = '';
             
             if (data.length === 0) {
@@ -2093,7 +2550,10 @@ if (isset($_SESSION['divisao_id'])) {
                 return;
             }
             
-            data.forEach(assunto => {
+            // Obter dados da página atual
+            const paginatedData = getPaginatedData(data, tableType);
+            
+            paginatedData.forEach(assunto => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-50';
                 
@@ -2145,6 +2605,8 @@ if (isset($_SESSION['divisao_id'])) {
                 
                 tbody.appendChild(row);
             });
+            
+            // Atualizar contador de itens
         }
 
         function formatDate(dateString) {
@@ -2171,20 +2633,33 @@ if (isset($_SESSION['divisao_id'])) {
 
         // Funções de usuários
         function renderUsuariosTable(data) {
+            // Filtrar dados baseado no perfil do usuário
+            let userFilteredData = data;
+            if (currentUser.perfil === 5) { // Cadastro de Usuário
+                // Só pode ver usuários da sua chefia
+                userFilteredData = data.filter(usuario => usuario.chefia_id === currentUser.chefia_id);
+            }
+            
+            // Armazenar dados filtrados e atualizar paginação
+            filteredData.usuarios = userFilteredData;
+            totalItems.usuarios = userFilteredData.length;
+            currentPage.usuarios = 1; // Reset para primeira página
+            
+            renderUsuariosTablePaginated(userFilteredData);
+            createPagination('usuarios', 'usuariosPagination');
+        }
+
+        function renderUsuariosTablePaginated(data) {
             const tbody = document.getElementById('usuariosTableBody');
             tbody.innerHTML = '';
             
-            // Filtrar dados baseado no perfil do usuário
-            let filteredData = data;
-            if (currentUser.perfil === 5) { // Cadastro de Usuário
-                // Só pode ver usuários da sua chefia
-                filteredData = data.filter(usuario => usuario.chefia_id === currentUser.chefia_id);
-            }
-            
-            if (filteredData.length === 0) {
+            if (data.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-4 text-center text-gray-500">Nenhum usuário encontrado</td></tr>';
                 return;
             }
+            
+            // Obter dados da página atual
+            const paginatedData = getPaginatedData(data, 'usuarios');
             
             const perfilLabel = (perfilId) => {
                 if (perfilId == 1) return 'Suporte Técnico';
@@ -2195,7 +2670,7 @@ if (isset($_SESSION['divisao_id'])) {
                 return '-';
             };
             
-            filteredData.forEach(usuario => {
+            paginatedData.forEach(usuario => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-50';
                 
@@ -2240,6 +2715,8 @@ if (isset($_SESSION['divisao_id'])) {
                 `;
                 tbody.appendChild(row);
             });
+            
+            // Atualizar contador de itens
         }
 
         function filterUsuarios() {
@@ -2698,22 +3175,35 @@ if (isset($_SESSION['divisao_id'])) {
 
         // Funções de chefias
         function renderChefiasTable(data) {
+            // Filtrar dados baseado no perfil do usuário
+            let chefiaFilteredData = data;
+            if (currentUser.perfil === 5) { // Cadastro de Usuário
+                // Só pode ver sua própria chefia
+                chefiaFilteredData = data.filter(chefia => chefia.id === currentUser.chefia_id);
+            }
+            
+            // Armazenar dados filtrados e atualizar paginação
+            filteredData.chefias = chefiaFilteredData;
+            totalItems.chefias = chefiaFilteredData.length;
+            currentPage.chefias = 1; // Reset para primeira página
+            
+            renderChefiasTablePaginated(chefiaFilteredData);
+            createPagination('chefias', 'chefiasPagination');
+        }
+
+        function renderChefiasTablePaginated(data) {
             const tbody = document.getElementById('chefiasTableBody');
             tbody.innerHTML = '';
             
-            // Filtrar dados baseado no perfil do usuário
-            let filteredData = data;
-            if (currentUser.perfil === 5) { // Cadastro de Usuário
-                // Só pode ver sua própria chefia
-                filteredData = data.filter(chefia => chefia.id === currentUser.chefia_id);
-            }
-            
-            if (filteredData.length === 0) {
+            if (data.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="2" class="px-6 py-4 text-center text-gray-500">Nenhuma chefia encontrada</td></tr>';
                 return;
             }
             
-            filteredData.forEach(chefia => {
+            // Obter dados da página atual
+            const paginatedData = getPaginatedData(data, 'chefias');
+            
+            paginatedData.forEach(chefia => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-50';
                 
@@ -2737,6 +3227,8 @@ if (isset($_SESSION['divisao_id'])) {
                 
                 tbody.appendChild(row);
             });
+            
+            // Atualizar contador de itens
         }
 
         function openChefiaModal(isEdit = false) {
@@ -2776,22 +3268,35 @@ if (isset($_SESSION['divisao_id'])) {
 
         // Funções de divisões
         function renderDivisoesTable(data) {
+            // Filtrar dados baseado no perfil do usuário
+            let divisaoFilteredData = data;
+            if (currentUser.perfil === 5) { // Cadastro de Usuário
+                // Só pode ver divisões da sua chefia
+                divisaoFilteredData = data.filter(divisao => divisao.chefia_id === currentUser.chefia_id);
+            }
+            
+            // Armazenar dados filtrados e atualizar paginação
+            filteredData.divisoes = divisaoFilteredData;
+            totalItems.divisoes = divisaoFilteredData.length;
+            currentPage.divisoes = 1; // Reset para primeira página
+            
+            renderDivisoesTablePaginated(divisaoFilteredData);
+            createPagination('divisoes', 'divisoesPagination');
+        }
+
+        function renderDivisoesTablePaginated(data) {
             const tbody = document.getElementById('divisoesTableBody');
             tbody.innerHTML = '';
             
-            // Filtrar dados baseado no perfil do usuário
-            let filteredData = data;
-            if (currentUser.perfil === 5) { // Cadastro de Usuário
-                // Só pode ver divisões da sua chefia
-                filteredData = data.filter(divisao => divisao.chefia_id === currentUser.chefia_id);
-            }
-            
-            if (filteredData.length === 0) {
+            if (data.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="3" class="px-6 py-4 text-center text-gray-500">Nenhuma divisão encontrada</td></tr>';
                 return;
             }
             
-            filteredData.forEach(divisao => {
+            // Obter dados da página atual
+            const paginatedData = getPaginatedData(data, 'divisoes');
+            
+            paginatedData.forEach(divisao => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-50';
                 
@@ -2819,6 +3324,8 @@ if (isset($_SESSION['divisao_id'])) {
                 `;
                 tbody.appendChild(row);
             });
+            
+            // Atualizar contador de itens
         }
 
         function updateChefiaSelect() {
@@ -3631,6 +4138,46 @@ function mostrarHistorico() {
             // Adicionar listeners para os campos de data
             document.getElementById('dataInicio').addEventListener('change', applyFilters);
             document.getElementById('dataFim').addEventListener('change', applyFilters);
+            
+            // Configurar listeners para pesquisa após um pequeno delay para garantir que os elementos existam
+            setTimeout(() => {
+                // Adicionar listeners para os campos de pesquisa com verificação
+                const searchAssuntoEl = document.getElementById('searchAssunto');
+                const searchAcoesEl = document.getElementById('searchAcoes');
+                const searchProvidenciasEl = document.getElementById('searchProvidencias');
+                const clearSearchBtnEl = document.getElementById('clearSearchBtn');
+                
+                if (searchAssuntoEl) {
+                    searchAssuntoEl.addEventListener('input', function() {
+                        applyFilters();
+                        updateSearchStatus();
+                    });
+                }
+                
+                if (searchAcoesEl) {
+                    searchAcoesEl.addEventListener('input', function() {
+                        applyFilters();
+                        updateSearchStatus();
+                    });
+                }
+                
+                if (searchProvidenciasEl) {
+                    searchProvidenciasEl.addEventListener('input', function() {
+                        applyFilters();
+                        updateSearchStatus();
+                    });
+                }
+                
+                if (clearSearchBtnEl) {
+                    clearSearchBtnEl.addEventListener('click', function() {
+                        if (searchAssuntoEl) searchAssuntoEl.value = '';
+                        if (searchAcoesEl) searchAcoesEl.value = '';
+                        if (searchProvidenciasEl) searchProvidenciasEl.value = '';
+                        applyFilters();
+                        updateSearchStatus();
+                    });
+                }
+            }, 100);
             
             // Inicializar funcionalidades responsivas
             setupSidebarLinks();

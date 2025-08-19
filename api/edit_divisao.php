@@ -72,7 +72,7 @@ try {
         }
         
         // Não pode alterar a chefia da divisão para outra chefia
-        if ($chefia_id !== $chefiaUsuarioLogado) {
+        if ($chefia_id != $chefiaUsuarioLogado) {
             http_response_code(403);
             echo json_encode(['error' => 'Você não pode alterar a chefia da divisão.']);
             exit;
@@ -88,19 +88,6 @@ try {
     if ($result->num_rows === 0) {
         http_response_code(400);
         echo json_encode(['error' => 'Chefia não encontrada']);
-        exit();
-    }
-    $stmt->close();
-    
-    // Verificar se já existe outra divisão com o mesmo nome
-    $stmt = $conn->prepare("SELECT id FROM divisao WHERE nome = ? AND id != ?");
-    $stmt->bind_param('si', $nome, $id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($result->num_rows > 0) {
-        http_response_code(400);
-        echo json_encode(['error' => 'Já existe uma divisão com este nome']);
         exit();
     }
     $stmt->close();
