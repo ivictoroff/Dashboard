@@ -4,7 +4,7 @@ session_start();
 // Configuração de headers antes de qualquer output
 header('Content-Type: application/json');
 
-// Verificação de autenticação robusta
+// Verificação de autenticação 
 if (!isset($_SESSION['usuario_id']) || !isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     http_response_code(401);
     echo json_encode([

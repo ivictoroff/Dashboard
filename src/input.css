@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Estilos customizados do projeto */
+.pagination-btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.pagination-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pagination-btn.active {
+    transform: none;
+    box-shadow: none;
+}
+
+.table-container {
+    min-height: 400px;
+}
+
+@media (max-width: 768px) {
+    .hide-mobile {
+        display: none;
+    }
+    
+    .assunto-column {
+        min-width: 200px;
+    }
+}

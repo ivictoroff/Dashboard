@@ -1,2 +1,53 @@
+# Arquivos de configuração sensíveis
 /db.php
+
+# Documentação/Manuais
 /Manual do Usuário do Painel Administrativo.pdf
+*.pdf
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Tailwind CSS - Executáveis
+tailwindcss.exe
+tailwindcss-v3.exe
+tailwindcss-*.exe
+
+# Tailwind CSS - Arquivo temporário para forçar classes
+tailwind-classes.html
+
+# CSS compilado (pode ser regenerado)
+dist/output.css
+dist/test.css
+
+# Logs
+*.log
+logs/
+
+# Arquivos temporários do sistema
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Arquivos temporários do editor
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Arquivos temporários PHP
+*.tmp
+
+# Cache
+.cache/
+temp/
+tmp/

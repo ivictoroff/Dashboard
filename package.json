@@ -1,0 +1,25 @@
+{
+  "name": "htdocs",
+  "version": "1.0.0",
+  "description": "Sistema web para gerenciamento de assuntos críticos do Comando Logístico do Exército Brasileiro.",
+  "main": "index.js",
+  "scripts": {
+    "build-css": ".\\tailwindcss-v3.exe -i .\\src\\input.css -o .\\dist\\output.css",
+    "watch-css": ".\\tailwindcss-v3.exe -i .\\src\\input.css -o .\\dist\\output.css --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ivictoroff/Dashboard.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ivictoroff/Dashboard/issues"
+  },
+  "homepage": "https://github.com/ivictoroff/Dashboard#readme",
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}

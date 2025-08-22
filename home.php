@@ -27,7 +27,7 @@ if (isset($_SESSION['divisao_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Painel Administrativo - COLOG</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="dist/output.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="icon" href="colog.png" type="image/x-icon">
     <style>
@@ -1989,11 +1989,17 @@ if (isset($_SESSION['divisao_id'])) {
                     break;
                 case 'usuarios':
                     // Garantir que todos os dados necessários estejam carregados
-                    Promise.all([
+                    const usuariosPromises = [
                         usuarios.length === 0 ? fetchUsuarios() : Promise.resolve(),
-                        chefias.length === 0 ? fetchChefias() : Promise.resolve(),
-                        divisoes.length === 0 ? fetchDivisoes() : Promise.resolve()
-                    ]).then(() => {
+                        chefias.length === 0 ? fetchChefias() : Promise.resolve()
+                    ];
+                    
+                    // Adicionar divisões apenas para perfis autorizados (NÃO para Editor - perfil 4)
+                    if (currentUser.perfil !== 4) {
+                        usuariosPromises.push(divisoes.length === 0 ? fetchDivisoes() : Promise.resolve());
+                    }
+                    
+                    Promise.all(usuariosPromises).then(() => {
                         renderUsuariosTable(usuarios);
                         // Aplicar contagem correta baseada no perfil
                         let usuariosParaContar = usuarios;
@@ -2005,18 +2011,29 @@ if (isset($_SESSION['divisao_id'])) {
                     });
                     break;
                 case 'om':
-                    // Garantir que chefias e divisões estejam carregadas
-                    Promise.all([
-                        chefias.length === 0 ? fetchChefias() : Promise.resolve(),
-                        divisoes.length === 0 ? fetchDivisoes() : Promise.resolve()
-                    ]).then(() => {
+                    // Garantir que chefias estejam carregadas
+                    const omPromises = [chefias.length === 0 ? fetchChefias() : Promise.resolve()];
+                    
+                    // Adicionar divisões apenas para perfis autorizados (NÃO para Editor - perfil 4)
+                    if (currentUser.perfil !== 4) {
+                        omPromises.push(divisoes.length === 0 ? fetchDivisoes() : Promise.resolve());
+                    }
+                    
+                    Promise.all(omPromises).then(() => {
                         renderChefiasTable(chefias);
-                        renderDivisoesTable(divisoes);
+                        
+                        // Renderizar divisões apenas se o usuário tem permissão
+                        if (currentUser.perfil !== 4) {
+                            renderDivisoesTable(divisoes);
+                        }
+                        
                         // Aplicar contagem correta baseada no perfil
                         let chefiasParaContar = chefias;
-                        let divisoesParaContar = divisoes;
+                        let divisoesParaContar = currentUser.perfil !== 4 ? divisoes : [];
                         if (currentUser.perfil === 5) {
-                            divisoesParaContar = divisoes.filter(divisao => divisao.chefia_id === currentUser.chefia_id);
+                            if (currentUser.perfil !== 4) {
+                                divisoesParaContar = divisoes.filter(divisao => divisao.chefia_id === currentUser.chefia_id);
+                            }
                             // Para chefias, só conta a própria chefia
                             chefiasParaContar = chefias.filter(chefia => chefia.id === currentUser.chefia_id);
                         }
@@ -4514,13 +4531,22 @@ function salvarAcao(acaoId) {
         } else {
             // Para outros perfis, apenas carregar assuntos
             fetchAssuntos();
-            if (currentUser.perfil === 1) {
-                fetchUsuarios();
+            
+            if (currentUser.perfil === 2 || currentUser.perfil === 3 || currentUser.perfil === 5) {
+                // Auditor OM, Auditor COLOG e Cadastro podem ver chefias e divisões
                 fetchChefias();
                 fetchDivisoes();
+            } else if (currentUser.perfil === 4) {
+                // Editor apenas pode ver chefias (para referência), mas NÃO divisões
+                fetchChefias();
             } else {
+                // Outros perfis apenas chefias
                 fetchChefias();
-                fetchDivisoes();
+            }
+            
+            // Usuários apenas para perfis autorizados
+            if (currentUser.perfil === 1 || currentUser.perfil === 5) {
+                fetchUsuarios();
             }
         }
         

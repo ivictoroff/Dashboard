@@ -1,14 +1,18 @@
 <?php
 session_start();
-header('Content-Type: application/json');
-require_once '../db.php';
+require_once '../session_check.php';
+// Verificar permissões baseadas no perfil
+$perfil = $_SESSION['perfil_id'] ?? 0;
 
-// Verificar se o usuário está logado
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Usuário não autenticado']);
+// Apenas perfis 1 (Suporte), 2 (Auditor OM), 3 (Auditor COLOG) e Perfil 4 (Editor) podem acessar notas de auditorias
+if (!in_array($perfil, [1, 2, 3, 4])) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Acesso negado. Você não tem permissão para visualizar notas de auditorias.']);
     exit();
 }
+
+header('Content-Type: application/json');
+require_once '../db.php';
 
 try {
     $assuntoId = $_GET['assunto_id'] ?? null;

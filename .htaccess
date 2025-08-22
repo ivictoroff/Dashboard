@@ -51,3 +51,22 @@ Header always set Referrer-Policy "strict-origin-when-cross-origin"
 # RewriteEngine On
 # RewriteCond %{HTTPS} off
 # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Proteger diretórios sensíveis
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Bloquear acesso direto a arquivos de configuração
+    RewriteRule ^(.*/)?\.git/ - [F,L]
+    RewriteRule ^(.*/)?node_modules/ - [F,L]
+    RewriteRule ^(.*/)?src/ - [F,L]
+    
+    # Página inicial
+    DirectoryIndex index.php
+</IfModule>
+
+# Limites de upload para produção
+php_value upload_max_filesize 2M
+php_value post_max_size 8M
+php_value max_execution_time 30
+php_value max_input_time 30
